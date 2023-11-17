@@ -54,7 +54,7 @@ public class HomeController {
 	@GetMapping("/features")
 	public String serverFeaturesPage(Model model, Users user) {
 		model.addAttribute("user", user);
-		return "/home/features";
+		return "home/features";
 	}
 
 }
