@@ -99,7 +99,7 @@ public class ProjectController {
 	public int addProjectTask(@RequestParam("title") String title, @RequestParam("desc") String description, 
 			@RequestParam("project") long projId, @RequestParam String status, Authentication auth) {
 					
-		if(title != "" && description != "" && projId > 0 && projId > 0) {
+		if(title != "" && projId > 0 && projId > 0) {
 			ProjectTasks task = new ProjectTasks();
 			Optional<Project> project = projDao.findById(projId);
 			project.ifPresent(value -> task.setContainerProject(value));
