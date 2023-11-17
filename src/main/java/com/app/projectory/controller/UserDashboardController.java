@@ -120,7 +120,7 @@ public class UserDashboardController {
 		
 		model.addAttribute("currentUserDetail", userServ.getCurrentUserDetail(auth));
 		model.addAttribute("currentPage", "dashboard");
-		 return "/user/user-content-container"; 
+		 return "user/user-content-container"; 
 		
 	}
 	
@@ -141,7 +141,7 @@ public class UserDashboardController {
 		//model.addAttribute("ownAccount", false);
 		model.addAttribute("ownAccount", true);
 		model.addAttribute("UserDetailByUsername", currentUser.getUsername());
-		return "/user/user-content-container";
+		return "user/user-content-container";
 	}
 	
 	@GetMapping("{username}")
@@ -165,7 +165,7 @@ public class UserDashboardController {
 		model.addAttribute("currentUserDetail", userServ.getCurrentUserDetail(auth));
 		model.addAttribute("currentPage", "profile");
 		model.addAttribute("ownAccount", false);
-		return "/user/user-content-container";
+		return "user/user-content-container";
 	}
 	
 	

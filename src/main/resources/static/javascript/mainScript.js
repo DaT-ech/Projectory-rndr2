@@ -39,6 +39,10 @@ function displayEventNotification(currentPathVar){
 	}
 	
 	if(currentPathVar == "?reg=err" || currentPathVar == "?reg=success"){
+	displaySigninForm('login')
+	}
+	
+	if(currentPathVar == "?reg=err" || currentPathVar == "?reg=err"){
 	displaySigninForm('signup')
 	}
 }

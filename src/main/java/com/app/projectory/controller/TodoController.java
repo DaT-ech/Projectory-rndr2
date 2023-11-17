@@ -34,12 +34,12 @@ public class TodoController {
 		model.addAttribute("items", fetchedItems);
 		model.addAttribute("itemCount", todoData.count());
 		model.addAttribute("ItemsForDeletion", item);
-		return "/user/todo/display-todo-list";
+		return "user/todo/display-todo-list";
 	}
 	@GetMapping("add-item-form")
 	public String displayAddTodoItemForm(Model todoModel, Todo todo) {
 		todoModel.addAttribute("todoModel", todo);
-		return "/user/todo/add-todo-list-form";
+		return "user/todo/add-todo-list-form";
 	}
 	@PostMapping("/add-item")
 	public String addTodoItem(Todo todo) {
@@ -70,7 +70,7 @@ public class TodoController {
 	public String displayTodoList(Model model) {
 		List<Todo> fetchedItems = todoData.findAll();
 		model.addAttribute("items", fetchedItems);
-		return "/user/display-todo-list";
+		return "user/display-todo-list";
 	}
 	@GetMapping("/delete-item")
 	public String deleteTodoItem(@RequestParam long itemId) {
