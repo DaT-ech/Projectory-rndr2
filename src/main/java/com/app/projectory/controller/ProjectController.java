@@ -43,7 +43,7 @@ public class ProjectController {
 		model.addAttribute("currentUserDetail", userServ.getCurrentUserDetail(auth));
 		model.addAttribute("currentPage", "board");
 		/* model.addAttribute("user", auth.getName()); */
-		return "/user/user-content-container";
+		return "user/user-content-container";
 	}
 	
 	@GetMapping("add-project")

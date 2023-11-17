@@ -42,14 +42,14 @@ public class HomeController {
 		else {
 			List<BlogPeekViewListDto> mostRatedBlogPeekViewList = blogRepo.findLatestBlogsPeekView(3);
 			model.addAttribute("MostRatedBlogPeekViewList", mostRatedBlogPeekViewList);
-		return "/home/landingPage";
+		return "home/landingPage";
 		}
 	}
 	
 	@GetMapping("/about")
 	public String serverAboutPage(Model model, Users user) {
 		model.addAttribute("user", user);
-		return "/home/about";
+		return "home/about";
 	}
 	@GetMapping("/features")
 	public String serverFeaturesPage(Model model, Users user) {
