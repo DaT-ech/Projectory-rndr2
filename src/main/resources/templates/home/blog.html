@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html xmlns="https://www.thymeleaf.org" class="dark-mode">
+
+<head th:replace="mainLayouts :: head"></head>
+
+<header th:replace="mainLayouts :: nav"></header>
+
+<body onLoad="showMainNotification()" class="">
+	<div class="containers">
+
+		<div id="login-signup-form" class="">
+			<div id="item-action-notification"
+				class="badge item-action-notification px-4 d-flex justify-content-center login-error-notif"
+				th:text="${param.indicator}"></div>
+			<!--<div th:fragment = "notification-board" id="item-action-notification" class="badge item-action-notification px-4 d-flex justify-content-center" th:text="${param.indicator}"></div>-->
+			<div class="login-signup-form">
+				<span class="login-signup-form-exit-btn mx-3 float-end" onclick="closeSigninForm()">&times;</span>
+				<br />
+				<div id="sign-in-form">
+					<span class="d-flex justify-content-center mt-3">
+						<h3 class="login-signup-form-header">Welcome back</h3>
+					</span>
+					<hr />
+					<form class="m-3" th:action="@{/login}" method="post" th:object="${user}">
+						<div class="row">
+							<div class="col-md-12">
+								<label for="username-input"
+									class="form-input-label form-input-label-dark-bg">Username</label>
+								<!--<input type="text" placeholder="username" th:field="${user.username}"
+									id="username-input" class="form-control form-control-sm mb-3">-->
+									<input type="text" placeholder="username" name="username"
+									id="username-input" class="form-control form-control-sm mb-3">
+							</div>
+							<div class="col-md-12">
+								<label for="signin-password-input"
+									class="form-input-label form-input-label-dark-bg">Password</label>
+								<!--<input type="password" placeholder="*************" th:field="${user.password}"
+									class="form-control form-control-sm mb-3" id="signin-password-input">-->
+									<input type="password" placeholder="*************" name="password"
+									class="form-control form-control-sm mb-3" id="signin-password-input">
+							</div>
+						</div>
+						<input type="submit" value="Sign in" class="btn btn-sm btn-primary-golden mb-3">
+						<span class="fw- auth-form-small-text"> New to the platform? <a class="form-alternative-btn"
+								onClick="displaySigninForm('signup')"> Create an account</a></span>
+					</form>
+				</div>
+
+				<div id="sign-up-form">
+					<span class="d-flex justify-content-center mt-3">
+						<h3 class="login-signup-form-header">Stress-free life begins here</h3>
+					</span>
+					<hr />
+					<form class="m-3" action="/register-user" method="post" th:object="${user}">
+
+						<div class="row">
+							<div class="col-md-4">
+								<label for="signup-username-input"
+									class="form-input-label form-input-label-dark-bg">First name</label>
+								<span class="required-field-asterisks"> *</span>
+								<input type="text" placeholder="First Name" th:field="${user.firstName}"
+									class="form-control form-control-sm mb-3" id="signup-username-input" required
+									autofocus>
+							</div>
+
+							<div class="col-md-4">
+								<label for="project-title-input" class="form-input-label form-input-label-dark-bg">Last
+									name</label>
+								<span class="required-field-asterisks"> *</span>
+								<input type="text" placeholder="Last Name" th:field="${user.lastName}"
+									class="form-control form-control-sm mb-3" id="signup-username-input" required>
+							</div>
+
+							<div class="col-md-4">
+
+								<label for="signup-email-input"
+									class="form-input-label form-input-label-dark-bg">Email</label>
+								<span class="required-field-asterisks"> *</span>
+								<input type="email" placeholder="example@example.com" th:field="${user.emailAddress}"
+									class="form-control form-control-sm mb-3" id="signup-email-input" required>
+							</div>
+
+							<div class="col-md-6">
+								<label for="signup-username-input"
+									class="form-input-label form-input-label-dark-bg">Username</label>
+								<span class="required-field-asterisks"> *</span>
+								<input type="text" placeholder="username" th:field="${user.username}"
+									class="form-control form-control-sm mb-3" id="signup-username-input" required>
+							</div>
+
+							<div class="col-md-6">
+								<label for="signup-password-input"
+									class="form-input-label form-input-label-dark-bg">Password</label>
+								<span class="required-field-asterisks"> *</span>
+								<input type="password" placeholder="************" th:field="${user.password}"
+									class="form-control form-control-sm mb-3" id="signup-password-input" required>
+							</div>
+							
+							<input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+
+						</div>
+
+						<div class="terms-services-agreement mb-2 ">
+							<input type="checkbox" value="agree-to-terms" class="d-inline mt-1" required>
+							<span class="auth-form-small-text auth-form-medium-size d-inline"> I accept terms &amp;
+								conditions. </span>
+						</div>
+
+						<input type="submit" value="Sign up" class="btn btn-sm btn-primary-golden mb-3">
+						<span class="fw- auth-form-small-text"> Already have an account? <a class="form-alternative-btn"
+								onClick="displaySigninForm('login')"> Login</a></span>
+
+					</form>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="front-poster-container" style="height: 250px;">
+			<div class="front-poster-container-inner">
+				<div class="front-poster-text d-flex justify-content-center px-3 pt-5" style="height: 250px; min-height: 250px;">
+					<!--<p class="mt-5">Some blog posts about productivity and productivity tools</p>-->
+					<span class="mt-5">Some blog posts about productivity and productivity tools</span>
+					<div class="get-started-btn-container d-flex justify-content-center">
+						<div class="get-started-btn-container-inner">
+							
+							
+						</div>
+					</div>
+				</div>
+
+
+				<img th:src="@{/images/landing-banner-bg.jpg}" style="min-height: 250px;">
+			</div>
+
+		</div>
+
+
+		<main id="blog-post-area">
+			<h4 class="mt-4 text-center">Most viewed</h4>
+		
+		<div class="d-flex justify-content-around flex-wrap mt-4">
+			
+			<div class="blog-post-container card projectory-fact-cards p-2 mb-3" data-aos="zoom-in" style="width: 18rem;" 
+			th:each="blog : ${MostRatedBlogPeekViewList}" th:id="blog-post-container-+''+${blog.id}">
+				<img class="card-img-top float-start d-inline" th:src="@{${blog.imageLink}}" th:alt="${blog.title} +' '+ illustration" height="200px">
+				<div class="card-body d-inline"> 
+					<h5 class="card-title" th:text = "${blog.title}" style="color:cadetblue"></h5>
+					<p class="card-text" th:text = "${blog.shortDescription}"> 
+					</p>
+					<hr/>
+					<p class="blog-full-content" th:text = "${blog.textContent}"></p>
+					
+					<!--<a th:href="/blog?post=+' '+${blog.id}" class="btn btn-primary btn-sm">Learn More</a>-->
+					<button class="btn btn-primary btn-sm blog-post-container-expanded-toggle" @click="expandBlogPost($event)" th:id="${blog.id}">Continue Read</button>
+				</div>
+			</div>
+			
+		</div>
+		<hr/>
+		<div class="d-flex justify-content-around flex-wrap mt-4">
+		<div class="blog-post-container card projectory-fact-cards p-2 mb-3 flex-fill mx-2" data-aos="zoom-in" style="width: 18rem;" 
+		th:each="blog : ${AllExceptMostViewedBlogsPeekView}" th:id="blog-post-container-+''+${blog.id}">
+				<!--<img class="card-img-top float-start d-inline" th:src="@{${blog.imageLink}}" th:alt="${blog.title} +' '+ illustration">-->
+				<div class="card-body d-inline"> 
+					<h5 class="card-title" th:text = "${blog.title}" style="color:cadetblue"></h5>
+					<p class="card-text" th:text = "${blog.shortDescription}"> 
+					</p>
+					<hr/>
+					<p class="blog-full-content" th:text="${blog.textContent}"></p>
+					<!--<a th:href="/blog?post=+' '+${blog.id}" class="btn btn-primary btn-sm">Learn More</a>-->
+					<!--<a th:href="@{/blog(post=${blog.id})}" class="btn btn-primary btn-sm">Continue Read</a>-->
+					<button class="btn btn-primary btn-sm blog-post-container-expanded-toggle" @click="expandBlogPost($event)" th:id="${blog.id}">Continue Read</button>
+				</div>
+			</div>
+</div>
+
+
+		<div class="div-top-decor-container d-flex">
+			<!--<script>
+
+				let divDecorContainer = document.getElementsByClassName("div-top-decor-container");
+				let decor = document.createElement("div");
+
+				//decor.setAttribute("class", "div-top-decor");					
+				//document.body.appendChild(decor);
+				const parent = divDecorContainer.parentElement();
+
+				parent.appendChild(decor);
+				alert("here");
+
+			</script>-->
+		</div>
+		</main>
+
+<script src="/javascript/vue-scripts/blog-vue.js" defer></script>
+
+
+
+
+	</div>
+	<footer th:replace="/mainLayouts :: footer"></footer>
+
+	<!--<script th:replace="/user/user-layouts::notification-board-script"></script>-->
+
+
+
+	<script>
+	/*	var loginStatus = "[[${loginStatus}]]";
+		var login_error = "[[${param.auth}]]";
+		if(auth_error == "required")
+		alert("You need to signin first");
+		else if(auth_error = "loggedout")
+		alert("Successfully logged out")
+		else{
+			
+		}*/
+	//alert(loginStatus.);
+	</script>
+<div th:replace="/mainLayouts::cookie-notice"></div>
+</body>
+
+</html>

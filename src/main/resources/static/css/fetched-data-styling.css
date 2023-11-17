@@ -1,0 +1,105 @@
+.cadetblue {
+	color: cadetblue;
+}
+
+.cadetblue:hover.cadetblue {
+	color: rgb(36, 127, 130);
+}
+
+.cadetblue-light {
+	color: rgb(105, 215, 219);
+}
+
+.cadetblue-darker {
+	color: rgb(19, 81, 83);
+}
+
+.project-status-label {
+	color: rgb(255, 255, 255);
+	padding: 0.15rem;
+}
+
+.project-status-label-card {
+	font-size: 10pt;
+	border-bottom-left-radius: 0.25rem;
+}
+
+.project-status-label.In.Progress {
+	background-color: rgba(63, 185, 124, 0.3);
+}
+
+.project-status-label.On.Hold {
+	background-color: rgba(245, 169, 0, 0.3);
+}
+
+.project-status-label.Not.started {
+	background-color: rgba(242, 100, 0, 0.3);
+}
+
+.project-status-label.Completed {
+	background-color: rgba(52, 135, 237, 0.3);
+}
+
+.todo-done {
+	text-decoration: line-through;
+}
+
+.project-created-by-you {
+	color: rgb(198, 70, 0);
+	font-weight: 900;
+}
+
+.project-owner-another,
+task-owner {
+	color: rgb(28, 113, 216);
+	font-weight: 900;
+}
+
+.goldenrod {
+	color: goldenrod;
+}
+
+.goldenrod:hover {
+	color: rgb(199, 145, 7);
+}
+
+.goldenrod-darker {
+	color: rgb(169, 132, 38);
+}
+
+.goldenrod:hover {
+	color: rgb(199, 145, 7);
+}
+
+.project-task-status.done-stage {
+	background-color: rgba(52, 135, 237, 0.3) !important;
+}
+
+.project-task-status.not.started-stage {
+	background-color: rgba(245, 169, 0, 0.2) !important;
+}
+
+.project-task-status.in.progress-stage {
+	background-color: rgba(63, 185, 124, 0.3) !important;
+}
+
+.dropdown-menu.show{
+	height:200px; 
+	overflow-y: scroll;
+	background-color: var(--primary-bg);
+	color: var(--primary-color) !important;
+}
+.dropdown-item{
+	color: var(--primary-color);
+}
+.dropdown-item:hover{
+	background-color: rgba(255, 255, 255, 0.1);
+	background-color: rgba(255, 255, 255, 0.1);
+	color: white;
+	background-color: var(	--home-nav-bg);
+	
+}
+
+
+
+

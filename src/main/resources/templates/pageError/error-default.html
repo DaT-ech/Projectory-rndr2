@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns="https://www.thymeleaf.org" class="dark-mode">
+
+<head th:replace="mainLayouts :: head"></head>
+
+<body>
+<div th:replace="/mainLayouts::main-bottom-asset-imports"></div>
+	<!--<header th:replace="mainLayouts :: nav"></header>-->
+	<br />
+	<div class="containers error-page-container">
+		<div class="mt-5 text-center">
+			<img th:src = "@{/images/projectory-logo-full.png}">
+			<h4 th:text="${errorCode}"></h4>
+			<h3>Something went wrong</h3>
+			<a th:href="@{/}" class="minimalist-btn fs-16 no-text-decoration">Take me to safety</a>
+		</div>
+	</div>
+	<div th:replace="/mainLayouts::main-bottom-asset-imports2"></div>
+</body>
+
+</html>

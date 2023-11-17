@@ -1,0 +1,107 @@
+<main class="main-content-container" th:fragment="dashboard-content" id="dashboard-container">
+	<section class="dashboard-area d-flex">
+		<aside th:replace="/user/user-layouts :: side-menu"></aside>
+
+		<div id="viewing-modal-container" class="modal-backdrop-blur">
+			<div id="viewing-modal" class="mt">
+				<span class="viewing-modal-exit-btn fa-solid fa-xmark p-1" onclick="closeViewingModal()"></span>
+
+				<div class="viewing-modal custom-scrollbar-style">
+
+					<div th:replace="/user/todo/todoLayouts :: todo-list-modal-content"></div>
+					<div th:replace="/user/project/project-layouts :: project-list-modal-content"></div>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="dashboard-cards-container d-flex justify-content-evenly flex-wrap mt-4">
+
+			<div th:replace="/user/project/project-layouts :: project-dashboard-card"></div>
+			<div th:replace="/user/todo/todoLayouts :: todo-list-dashboard-card"></div>
+			<div th:replace="/user/project/project-layouts :: project-task-dashboard-card"></div>
+
+
+
+			<div class="card user-dashboard-cards custom-scrollbar-style" style="width: 18rem;" data-aos="zoom-in">
+				<div class="card-header d-flex px-0">
+					<span class="dashboard-card-img-top mx-2 mt-1 fa-solid fa-timeline" alt="task icon"></span>
+					<h5 class="card-title dashboard-card-title">Activity</h5>
+				</div>
+				<div class="card-body">
+					<!--<p class="card-text fw-lighter">Catch-up with your activities</p><br />-->
+
+					<div class="modal-project-task-container-inner custom-scrollbar-style-3 text-center my-5">
+						<span class="text-body-secondary" style="color: rgb(94, 92, 100)">
+							<span class="ti-time d-block fs-20"></span>
+							<span>coming soon...</span>
+						</span>
+						<!--<span>Projects: </span>
+						<span th:text="${projectCount}"></span>
+						<div th:each="proj : ${project}">
+							<div class="modal-project-task-items p-1 m-1">
+								<span>You created project: </span>
+								<span class="modal-project-task-name cadetblue-light" th:text="${proj.title}"></span>
+								<span> on </span>
+								<span class="p-1 cadetblue-light"
+									th:text="${proj.creationDate}"></span>
+								<span th:text="${proj.projectMembers}"></span>
+							</div>
+						</div>-->
+					</div>
+
+
+
+
+
+				</div>
+			</div>
+		</div>
+	</section>
+
+
+	<section class="metrics-and-report pt-2 mt-2">
+
+		<main class="charts">
+			<div class="projects-report d-flex justify-content-evenly flex-wrap">
+				<div class="project-status-chart">
+					<h5>Project Status</h5>
+					<!--<canvas id="projects-chart" class="chart pie-chart" th:fragment = "project-status"></canvas>-->
+					<canvas id="projects-chart" class="chart pie-chart"></canvas>
+					<!--<div id="projects-chart-vue">
+						<h3>test chart with vue</h3>
+						<template> 
+						<canvas id="projects-chart-vue-canvas" class="chart pie-chart"></canvas>
+					</template>
+					<script src="/javascript/vue-scripts/charts-main-vue.js"></script>
+					</div>-->
+
+					<!--<script>
+						var ProjectStatusCount = "[[${ProjectStatusCount}]]";
+					</script>-->
+				</div>
+				<!--<div class="productivity-chart flex-grow-1">
+					<h5>Weekly Productivity Report</h5>
+					<canvas id="productivity-chart" class="chart pie-chart"></canvas>
+					</canvas>
+				</div>
+
+
+				<div class="project-status-chart productivity-chart">
+					<span class="text-center my-5">
+						<h5>...</h5>
+						<span class="ti-dashboard fs-24 text-center mx-5 my-5 " style="color: rgb(94, 92, 100)"></span>
+					</span>
+					<canvas id="projects-chart" class="chart pie-chart">
+					</canvas>
+				</div>-->
+			</div>
+		</main>
+<script src="/javascript/charts-project.js" defer></script>
+	</section>
+
+	<!--<script>
+		var TodoCollections = "[[${ProjectStatusCount}]]";
+	</script>-->
+
+</main>

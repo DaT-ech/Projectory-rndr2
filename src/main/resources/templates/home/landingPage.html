@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html xmlns="https://www.thymeleaf.org" class="dark-mode">
+
+<head th:replace="mainLayouts :: head"></head>
+
+<header th:replace="mainLayouts :: nav"></header>
+
+<body onLoad="showMainNotification()" class="">
+	<div class="containers">
+
+		<div id="login-signup-form" class="">
+			<div id="item-action-notification"
+				class="badge item-action-notification px-4 d-flex justify-content-center login-error-notif"
+				th:text="${param.indicator}"></div>
+			<!--<div th:fragment = "notification-board" id="item-action-notification" class="badge item-action-notification px-4 d-flex justify-content-center" th:text="${param.indicator}"></div>-->
+			<div class="login-signup-form">
+				<span class="login-signup-form-exit-btn mx-3 float-end" onclick="closeSigninForm()">&times;</span>
+				<br />
+				<div id="sign-in-form">
+					<span class="d-flex justify-content-center mt-3">
+						<h3 class="login-signup-form-header">Welcome back</h3>
+					</span>
+					<hr />
+					<form class="m-3" th:action="@{/login}" method="post" th:object="${user}">
+						<div class="row">
+							<div class="col-md-12">
+								<label for="username-input"
+									class="form-input-label form-input-label-dark-bg">Username</label>
+								<!--<input type="text" placeholder="username" th:field="${user.username}"
+									id="username-input" class="form-control form-control-sm mb-3">-->
+									<input type="text" placeholder="username" name="username"
+									id="username-input" class="form-control form-control-sm mb-3">
+							</div>
+							<div class="col-md-12">
+								<label for="signin-password-input"
+									class="form-input-label form-input-label-dark-bg">Password</label>
+								<!--<input type="password" placeholder="*************" th:field="${user.password}"
+									class="form-control form-control-sm mb-3" id="signin-password-input">-->
+									<input type="password" placeholder="*************" name="password"
+									class="form-control form-control-sm mb-3" id="signin-password-input">
+							</div>
+						</div>
+						<input type="submit" value="Sign in" class="btn btn-sm btn-primary-golden mb-3">
+						<span class="fw- auth-form-small-text"> New to the platform? <a class="form-alternative-btn"
+								onClick="displaySigninForm('signup')"> Create an account</a></span>
+					</form>
+				</div>
+
+				<div id="sign-up-form">
+					<span class="d-flex justify-content-center mt-3">
+						<h3 class="login-signup-form-header">Stress-free life begins here</h3>
+					</span>
+					<hr />
+					<form class="m-3" action="/register-user" method="post" th:object="${user}">
+
+						<div class="row">
+							<div class="col-md-4">
+								<label for="signup-username-input"
+									class="form-input-label form-input-label-dark-bg">First name</label>
+								<span class="required-field-asterisks"> *</span>
+								<input type="text" placeholder="First Name" th:field="${user.firstName}"
+									class="form-control form-control-sm mb-3" id="signup-username-input" required
+									autofocus>
+							</div>
+
+							<div class="col-md-4">
+								<label for="project-title-input" class="form-input-label form-input-label-dark-bg">Last
+									name</label>
+								<span class="required-field-asterisks"> *</span>
+								<input type="text" placeholder="Last Name" th:field="${user.lastName}"
+									class="form-control form-control-sm mb-3" id="signup-username-input" required>
+							</div>
+
+							<div class="col-md-4">
+
+								<label for="signup-email-input"
+									class="form-input-label form-input-label-dark-bg">Email</label>
+								<span class="required-field-asterisks"> *</span>
+								<input type="email" placeholder="example@example.com" th:field="${user.emailAddress}"
+									class="form-control form-control-sm mb-3" id="signup-email-input" required>
+							</div>
+
+							<div class="col-md-6">
+								<label for="signup-username-input"
+									class="form-input-label form-input-label-dark-bg">Username</label>
+								<span class="required-field-asterisks"> *</span>
+								<input type="text" placeholder="username" th:field="${user.username}"
+									class="form-control form-control-sm mb-3" id="signup-username-input" required>
+							</div>
+
+							<div class="col-md-6">
+								<label for="signup-password-input"
+									class="form-input-label form-input-label-dark-bg">Password</label>
+								<span class="required-field-asterisks"> *</span>
+								<input type="password" placeholder="************" th:field="${user.password}"
+									class="form-control form-control-sm mb-3" id="signup-password-input" required>
+							</div>
+							
+							<input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+
+						</div>
+
+						<div class="terms-services-agreement mb-2 ">
+							<input type="checkbox" value="agree-to-terms" class="d-inline mt-1" required>
+							<span class="auth-form-small-text auth-form-medium-size d-inline"> I accept terms &amp;
+								conditions. </span>
+						</div>
+
+						<input type="submit" value="Sign up" class="btn btn-sm btn-primary-golden mb-3">
+						<span class="fw- auth-form-small-text"> Already have an account? <a class="form-alternative-btn"
+								onClick="displaySigninForm('login')"> Login</a></span>
+
+					</form>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="front-poster-container">
+			<div class="front-poster-container-inner">
+				<div class="front-poster-text d-flex justify-content-center px-3 pt-5">
+					<p class="mt-5" data-aos="fade-down">Visualizing the trajectory of your projects has never been easier!</p><br /><br />
+					<div class="get-started-btn-container d-flex justify-content-center">
+						<div class="get-started-btn-container-inner">
+							<button class="btn landing-page-btn get-started-btn d-inline"
+								onClick="displaySigninForm('signup'); startElementRotation();">Get Started</button>
+							<span class="px-2"></span>
+							
+						</div>
+					</div>
+				</div>
+
+
+				<img th:src="@{/images/landing-banner-bg.jpg}">
+			</div>
+
+		</div>
+
+
+		<div class="d-flex justify-content-around flex-wrap mt-4">
+			<div data-aos="zoom-in" data-aos-delay="450" class="card projectory-fact-cards p-2 mb-3" style="width: 18rem;" th:each="blog : ${MostRatedBlogPeekViewList}">
+				<img class="card-img-top" th:src="@{${blog.imageLink}}" th:alt="${blog.title} +' '+ illustration">
+				<div class="card-body">
+					<h5 class="card-title" th:text = "${blog.title}"></h5>
+					<p class="card-text" th:text = "${blog.shortDescription}"> 
+					</p>
+					<!--<a th:href="/blog?post=+' '+${blog.id}" class="btn btn-primary btn-sm">Learn More</a>-->
+					<a th:href="@{/blog(post=${blog.id})}" class="btn btn-primary btn-sm">Continue Read</a>
+				</div>
+			</div>
+			<!--
+			<div class="card projectory-fact-cards p-2 mb-3" style="width: 18rem;" th:each="blog : blogPeakViewList">
+				<img class="card-img-top" th:src="@{/images/productivity.png}" alt="productivity illustration">
+				<div class="card-body">
+					<h5 class="card-title">Plan Your Day</h5>
+					<p class="card-text">Studies show scheduling and planning your day increases productivity by 100%.
+						we spend more energy trying to remember what we need to do than actually accomplishing a task.
+					</p>
+					<a href="#" class="btn btn-primary btn-sm">Learn More</a>
+				</div>
+			</div>
+
+			<div class="card projectory-fact-cards p-2 mb-3" style="width: 18rem;">
+				<img class="card-img-top" th:src="@{/images/manage-stress.png}" alt="manage stress illustration">
+				<div class="card-body">
+					<h5 class="card-title">Manage Stress</h5>
+					<p class="card-text">Stress has become prevalent in the current state of the world we live in. We
+						need to protect our mental health
+						with everything we got. Keeping your life organized can keep you sane. </p>
+					<a href="#" class="btn btn-primary btn-sm">Learn More</a>
+				</div>
+			</div>
+			<div class="card projectory-fact-cards p-2 mb-3" style="width: 18rem;">
+				<img class="card-img-top" th:src="@{/images/save-time.png}" alt="save time illustration">
+				<div class="card-body">
+					<h5 class="card-title">Save time</h5>
+					<p class="card-text">It is well know that time is the ultimate currency. We need to salvage as much
+						of it as we can and put it
+						in good use. Just like as foreth fathers used tools to save time when hunting, we need to do the
+						same.
+					</p>
+					<a href="#" class="btn btn-primary btn-sm">Learn More</a>
+				</div>
+			</div>
+			-->
+			
+		</div>
+
+<!-- Service start -->
+<section class="service-section service-home">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-6">
+				<h2 class="mb-2 ">Core Features.</h2>
+				<p class="mb-5">Projectory's core services are designed to help you and your team plan, 
+					manage, and deliver projects successfully. By using Projectory, you can improve your 
+					team's productivity, efficiency, and collaboration.</p>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col-lg-4">
+				<div class="service-item mb-5" data-aos="fade-left" >
+					<i class="ti-layers"></i>
+					<h4 class="my-3">Task management</h4>
+					<p>Create, assign, and track tasks. See how tasks are progressing in real time.</p>
+				</div>
+			</div>
+			<div class="col-lg-4">
+				<div class="service-item mb-5" data-aos="fade-left"  data-aos-delay="450">
+					<i class="ti-announcement"></i>
+					<h4 class="my-3">Collaboration</h4>
+					<p>Get notified of updates to tasks and projects. Share tasks, files, and comments with team members.</p>
+				</div>
+			</div>
+			<div class="col-lg-4">
+				<div class="service-item mb-5 mb-lg-0" data-aos="fade-left"  data-aos-delay="750">
+					<i class="ti-layout"></i>
+					<h4 class="my-3">Kanban boards</h4>
+					<p>Great way for visualizing project progress.</p>
+				</div>
+			</div>
+			<div class="col-lg-4">
+				<div class="service-item" data-aos="fade-left"  data-aos-delay="750">
+					<i class="ti-pie-chart"></i>
+					<h4 class="my-3">Reporting and analytics</h4>
+					<p>Generate reports on project progress, task completion, and resource utilization.</p>
+				</div>
+			</div>
+			<div class="col-lg-4">
+				<div class="service-item mb-5" data-aos="fade-left"  data-aos-delay="950">
+					<i class="ti-id-badge"></i>
+					<h4 class="my-3">Social experience</h4>
+					<p>Meet new people. Create community &amp; participate public projects</p>
+				</div>
+			</div>
+			<div class="col-lg-4">
+				<div class="service-item mb-5 mb-lg-0" data-aos="fade-left"  data-aos-delay="1050">
+					<i class="ti-server"></i>
+					<h4 class="my-3">Data-driven decision making</h4>
+					<p>Make decisions based on progress data.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- service end -->
+
+		<div class="div-top-decor-container d-flex">
+			<!--<script>
+
+				let divDecorContainer = document.getElementsByClassName("div-top-decor-container");
+				let decor = document.createElement("div");
+
+				//decor.setAttribute("class", "div-top-decor");					
+				//document.body.appendChild(decor);
+				const parent = divDecorContainer.parentElement();
+
+				parent.appendChild(decor);
+				alert("here");
+
+			</script>-->
+		</div>
+
+
+		<div class="d-flex justify-content-around mt-4 container-bg-blue p-3">
+
+			<p class="fs-1 blue-bg-text-headline pt-5">Projectory can help you take the lead and be the <span
+					class="colored-text-inline align-self-center">pro</span>
+				in your <span class="colored-text-inline">pro</span>jects.</p>
+			<p class="blue-bg-text-paragraph align-self-start"> <img src="images/pro-ject-manager.png" width="200px"
+					height="200px" class="d-inline"></p>
+		</div>
+
+
+
+
+	</div>
+	<footer th:replace="/mainLayouts :: footer"></footer>
+
+	<!--<script th:replace="/user/user-layouts::notification-board-script"></script>-->
+
+
+
+	<script>
+	/*	var loginStatus = "[[${loginStatus}]]";
+		var login_error = "[[${param.auth}]]";
+		if(auth_error == "required")
+		alert("You need to signin first");
+		else if(auth_error = "loggedout")
+		alert("Successfully logged out")
+		else{
+			
+		}*/
+	//alert(loginStatus.);
+	</script>
+<div th:replace="/mainLayouts::cookie-notice"></div>
+</body>
+
+</html>
+
