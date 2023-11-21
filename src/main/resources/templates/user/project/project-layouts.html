@@ -38,8 +38,7 @@
 
 						<span class="btn-group btn-group-sm project-owner-indicator info-tag-dark 
 					info-tag-dark-sm float-end fs-8 p-0">
-							<span role="button"
-								class="btn btn-success  btn-sm dropdown-toggle m-0 p-0 px-1 fs-8"
+							<span role="button" class="btn btn-success  btn-sm dropdown-toggle m-0 p-0 px-1 fs-8"
 								type="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
 								<template v-if="projectMembers[project.projectId]">
 									{{projectMembers[project.projectId].length}}
@@ -70,10 +69,12 @@
 				<div class="project-modal-inner-content-container d-flex flex-wrap justify-content-around p-2">
 					<div class="project-modal-boxes-inner p-1 my-2 mx-2 align-self-start flex-fill"
 						style="display: block;" :id="project.projectId">
-						<!--<span id="itemNumber" class="badge text-bg-warning itemNumber">{{++projectListCount}}</span>-->  <!--causing loading prob.-->
-						
-						<span id="projectNumber" class="badge text-bg-warning itemNumber ti-clipboard pe-0">&nbsp;</span>
-						
+						<!--<span id="itemNumber" class="badge text-bg-warning itemNumber">{{++projectListCount}}</span>-->
+						<!--causing loading prob.-->
+
+						<span id="projectNumber"
+							class="badge text-bg-warning itemNumber ti-clipboard pe-0">&nbsp;</span>
+
 						<span id="">&nbsp; {{project.title}}</span>
 						<br />
 						<span class="fw-lighter">{{project.description}}</span>
@@ -107,11 +108,10 @@
 						<div :id="`add-member-list-container-${project.projectId}`"
 							class="add-project-member-list-container custom-scrollbar-style-2 overflow-ver-scroll text-center">
 							<!--loop through connections list-->
-							<span v-if="connectsList.length == 0" 
-							class="ti-info-alt p-1 word-wrap fs-10">
-							You have no connections yet. 
+							<span v-if="connectsList.length == 0" class="ti-info-alt p-1 word-wrap fs-10">
+								You have no connections yet.
 								Search &amp; add some connections first.</span>
-							
+
 							<div v-for="conn in connectsList" :key="conn.connectionId"
 								class="add-project-member-list-item-box-container">
 
@@ -140,7 +140,7 @@
 								<input type="hidden" :value="project.projectId" id="proj-id">
 								<input type="text" placeholder="Task title *"
 									class="form-control form-control-sm mb-1 task-title" id="task-title">
-									
+
 								<input type="text" placeholder="Task description"
 									class="form-control form-control-sm mb-1 task-description" id="task-description">
 
@@ -158,11 +158,15 @@
 
 								<button class="btn btn-primary-golden btn-sm"
 									@click="addTaskToProject(project.projectId)">
-									<template v-if="addingProjectTask" style="height:1px; width: 1px;">
-										<span th:replace="user/user-layouts :: dot-spinner-loader"></span>
-									</template>
-									 Add
-									</button>
+									<span class="d-flex justify-content-between">
+										<template v-if="addingProjectTask">
+											<span style="width:30px;height:30px">
+												<span th:replace="user/user-layouts :: dot-spinner-loader"></span>
+											</span>
+										</template>
+										<span>Add</span>
+									</span>
+								</button>
 							</div>
 						</div>
 
@@ -190,17 +194,16 @@
 													v-if="task.assigneeUsername!=null">@{{task.assigneeUsername}}</span>
 												<span class="ms-5 task-owner pe-5"
 													v-if="task.assigneeUsername==null">...</span>
-													<span
-													class="fa-solid fa-trash-can btn btn-danger ms-1 fs-10 p-1 me-2"
+												<span class="fa-solid fa-trash-can btn btn-danger ms-1 fs-10 p-1 me-2"
 													@click="deleteTaskFromProject(task.taskId)"></span>
 												<span
 													:class="`ms-5 d-block ${task.status}-stage`">{{task.status}}</span>
-													
-													<span>
-												
+
+												<span>
+
+												</span>
 											</span>
-											</span>
-											
+
 										</span>
 									</span>
 								</span>
@@ -214,7 +217,17 @@
 						<span role="button" v-if="project.projectOwnerUsername === currentUserDetail.username"
 							class="badge text-bg-danger delete-single-item-btn delete-single-item-btn-1"
 							title="Delete Project" @click="deleteProject(project.projectId)">
-							<span class="fa-solid fa-trash-can"></span> Delete Project</span>
+
+							<span class="d-flex justify-content-between">
+								<template v-if="deletingProject">
+									<span style="width:20px;height:20px">
+										<span th:replace="user/user-layouts :: dot-spinner-loader"></span>
+									</span>
+								</template>
+								<span class="fa-solid fa-trash-can"></span>
+								<span>Delete Project</span>
+							</span>
+						</span>
 					</div>
 
 
@@ -286,8 +299,10 @@
 
 	<div class="col-md-12 mb-2">
 		<button @click="addProject()" class="btn btn-primary-golden btn-sm mt-3">
-			<template v-if="creatingProject" width="50%" height="30%">
-				<span th:replace="user/user-layouts :: dot-spinner-loader"></span>
+			<template v-if="creatingProject">
+				<span style="width:30px;height:30px">
+					<span th:replace="user/user-layouts :: dot-spinner-loader"></span>
+				</span>
 			</template> Create Project
 		</button></button>
 	</div>
@@ -338,43 +353,44 @@
 <div th:fragment="project-dashboard-card" class="card user-dashboard-cards custom-scrollbar-style" style="width: 18rem;"
 	onclick="displayViewingModal(1)" data-aos="zoom-in">
 	<div id="project-card">
-		
-	
-	<div class="card-header d-flex">
-		<span class="dashboard-card-img-top mx-2 mt-1 fa-solid fa-diagram-project" alt="project icon"></span>
-		<h5 class="card-title dashboard-card-title">Project</h5>
-	</div>
-	<div class="card-body p-1">
 
-		<!--<p class="card-text fw-lighter item-count-check">{{projects.length}}</p>-->
-		<div class="">
-			
-			<div class="dashboard-card-content-container-inner m-0 custom-scrollbar-style-3">
-				<div v-for="proj in projects">
-					<div :id="proj.projectId" class="dashboard-card-content-items m-1 p-1">
-					<!--	<span id="projectNumber" class="badge text-bg-warning itemNumber">0</span>-->
-						<span id="projectNumber" class="badge text-bg-warning itemNumber ti-clipboard pe-0">&nbsp;</span>
-						
-						<!--<span th:text = "${item.todoItemId}" class="badge text-bg-warning"></span>-->
-						<span id="">{{proj.title}}</span>
-						<br />
-						<span class="fw-lighter dashboard-card-content-description p-1 ps-2 d-block">
-							{{proj.description}}</span>
-						<span :class="`project-status-label-card project-status-label ${proj.status}`">
-							{{proj.status}}</span>
+
+		<div class="card-header d-flex">
+			<span class="dashboard-card-img-top mx-2 mt-1 fa-solid fa-diagram-project" alt="project icon"></span>
+			<h5 class="card-title dashboard-card-title">Project</h5>
+		</div>
+		<div class="card-body p-1">
+
+			<!--<p class="card-text fw-lighter item-count-check">{{projects.length}}</p>-->
+			<div class="">
+
+				<div class="dashboard-card-content-container-inner m-0 custom-scrollbar-style-3">
+					<div v-for="proj in projects">
+						<div :id="proj.projectId" class="dashboard-card-content-items m-1 p-1">
+							<!--	<span id="projectNumber" class="badge text-bg-warning itemNumber">0</span>-->
+							<span id="projectNumber"
+								class="badge text-bg-warning itemNumber ti-clipboard pe-0">&nbsp;</span>
+
+							<!--<span th:text = "${item.todoItemId}" class="badge text-bg-warning"></span>-->
+							<span id="">{{proj.title}}</span>
+							<br />
+							<span class="fw-lighter dashboard-card-content-description p-1 ps-2 d-block">
+								{{proj.description}}</span>
+							<span :class="`project-status-label-card project-status-label ${proj.status}`">
+								{{proj.status}}</span>
+						</div>
 					</div>
 				</div>
-			</div>
-			
-			
-		</div>
-		<button
-			class="minimalist-btn minimalist-btn-lighter minimalist-btn-lighter2 btn-sm create-project-btn create-project-btn-card ms-2 mt-2"
-			onClick="showAddProjectForm('card')">Create
-			Project</button>
 
-	</div>
-	
+
+			</div>
+			<button
+				class="minimalist-btn minimalist-btn-lighter minimalist-btn-lighter2 btn-sm create-project-btn create-project-btn-card ms-2 mt-2"
+				onClick="showAddProjectForm('card')">Create
+				Project</button>
+
+		</div>
+
 	</div>
 	<!--<script src="/javascript/vue-scripts/dashboard-project-card-vue.js"></script>-->
 </div>

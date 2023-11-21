@@ -35,6 +35,7 @@ const projectVue = Vue.createApp({
 			addingProjectTask: false,
 			loadingProjects: false,
 			creatingProject: false,
+			deletingProject: false,
 
 			projectTasksOnBoardPeekView: [],
 			projectOnBoardCount: 0
@@ -97,16 +98,16 @@ const projectVue = Vue.createApp({
 				})
 
 		},
-		updateProjectTasks(projectId){
+		updateProjectTasks(projectId) {
 			this.projects.forEach(project => {
 
-						fetch(getProjectTasks + "?project=" + project.projectId)
-							.then(response => response.json())
-							.then(data => {
-								project.projectTasks = data;
-								//this.loadingProjects = false;
-							})
+				fetch(getProjectTasks + "?project=" + project.projectId)
+					.then(response => response.json())
+					.then(data => {
+						project.projectTasks = data;
+						//this.loadingProjects = false;
 					})
+			})
 		},
 		getProjectCount() {
 			//get all projects count
@@ -165,15 +166,19 @@ const projectVue = Vue.createApp({
 			}
 		},
 		deleteProject(projectId) {
+			this.deletingProject = true;
 			fetch(deleteProjectUrl + '?project=' + projectId)
 				.then(response => response.json())
 				.then(data => {
-					if (data == 1)
+					if (data == 1) {
 						toggleNotification("success", "Project successfully deleted!")
+						this.deletingProject = false;
+						this.getProjects();
+						this.getProjectCount();
+					}
 					else
 						toggleNotification("error", "Unable to delete project!")
-					this.getProjects();
-					this.getProjectCount();
+
 				})
 		},
 		showAddProjectMembersList(id, ev, on) {
@@ -358,6 +363,7 @@ const projectVue = Vue.createApp({
 				trigger.setAttribute("title", "Minimize");
 				div.classList.remove("project-modal-boxes-default");
 				div.classList.add("project-modal-boxes-expanded");
+				div.parentElement.style.width = "100%";
 				div.scrollIntoView();
 
 				trigger.classList.remove('fa-expand');
@@ -367,6 +373,7 @@ const projectVue = Vue.createApp({
 				trigger.setAttribute("title", "Expand");
 				div.classList.add("project-modal-boxes-default");
 				div.classList.remove("project-modal-boxes-expanded");
+				div.parentElement.style.width = "fit-content";
 				trigger.classList.remove('fa-compress');
 				trigger.classList.add('fa-expand');
 			}

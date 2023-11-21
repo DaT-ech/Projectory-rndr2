@@ -71,7 +71,8 @@
 						<li><span v-if="noResult">no results found</span></li>
 
 						<template v-if="searchLoading" style="top: 20px">
-							<span class="dot-spinner align-center"  th:fragment="dot-spinner-loader">
+							<span class="dot-spinner align-center"  th:fragment="dot-spinner-loader"
+							style="height: inherit; width: inherit;">
 								<div class="dot-spinner__dot"></div>
 								<div class="dot-spinner__dot"></div>
 								<div class="dot-spinner__dot"></div>
