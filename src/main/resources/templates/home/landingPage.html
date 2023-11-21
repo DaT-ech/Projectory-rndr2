@@ -84,8 +84,11 @@
 								<label for="signup-username-input"
 									class="form-input-label form-input-label-dark-bg">Username</label>
 								<span class="required-field-asterisks"> *</span>
+								
 								<input type="text" placeholder="username" th:field="${user.username}"
-									class="form-control form-control-sm mb-3" id="signup-username-input" required>
+									class="form-control form-control-sm mb-1" id="signup-username-input" required
+									@keyup="checkUsernameAvailabiltiy($event.target.value)">
+									<span :class="`ms-1 username-availability-notice fs-9 ${usernameAvailability}`">{{usernameAvailability}}</span>
 							</div>
 
 							<div class="col-md-6">
@@ -112,6 +115,7 @@
 
 					</form>
 				</div>
+				<script src="/javascript/vue-scripts/signup-vue.js"></script>
 
 			</div>
 

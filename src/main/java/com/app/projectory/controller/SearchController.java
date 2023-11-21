@@ -31,6 +31,7 @@ public class SearchController {
 	
 	@GetMapping("/all/{keyword}")
 	public @ResponseBody List<SearchResultDto> searchEverything(@PathVariable String keyword) {
+		keyword = keyword.toLowerCase();
 		return searchRepo.searchEverything(keyword);
 	}
 

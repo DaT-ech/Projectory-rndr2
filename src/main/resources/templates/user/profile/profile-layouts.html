@@ -31,17 +31,17 @@
 				<!--<span class="ti-check"> <span>request sent.</span> </span>-->
 				<template v-if="isOwnAccount != 'true'
 				&& authUserId == connectionSenderReceiverId.requestReceiver">
-				<button class="align-self-start minimalist-btn minimalist-btn-theme-controlled"
-					@click="cancelConnectionRequest(authUserId, $event)">
-					<span class="fa-solid fa-times pe-1"></span>
-					<!--<span v-if="isOwnAccount == 'true'">Reject Request</span>						
+					<button class="align-self-start minimalist-btn minimalist-btn-theme-controlled"
+						@click="cancelConnectionRequest(authUserId, $event)">
+						<span class="fa-solid fa-times pe-1"></span>
+						<!--<span v-if="isOwnAccount == 'true'">Reject Request</span>						
 					<span v-if="isOwnAccount != 'true'">Cancel Request</span>-->
 
-					<span>Cancel Request</span>
-				</button>
+						<span>Cancel Request</span>
+					</button>
 				</template>
 
-					<template v-if="authUserId != connectionSenderReceiverId.requestReceiver">
+				<template v-if="authUserId != connectionSenderReceiverId.requestReceiver">
 					<button class=" minimalist-btn minimalist-btn-theme-controlled-lighter float-end"
 						@click="rejectConnectionRequest(connectionSenderReceiverId.connectionId, $event)"
 						style="right:0;margin-left:auto">
@@ -53,7 +53,7 @@
 					<button class=" minimalist-btn minimalist-btn-theme-controlled float-end"
 						@click="acceptConnectionRequest(connectionSenderReceiverId.connectionId, $event); event.preventDefault()"
 						style="right:0;margin-left:auto">
-						<span >
+						<span>
 							<span><span class="fa-solid fa-check"></span> Accept request</span>
 						</span>
 					</button>
@@ -270,6 +270,16 @@
 				</button>
 			</template>
 			<div></div><br />
+		</div>
+	</a>
+</div>
+
+<div th:fragment="suggested-connections">
+	<h4>You may also know</h4>
+	<a v-for="suggested in suggestedConnections" :href="`/user/${suggested.username}`"
+	class="no-text-decoration mb-2">
+		<div class="user-project-list-items mb-1 p-1 m-2">
+			<h6>{{suggested.firstName}} {{suggested.lastName}} • @{{suggested.username}}</h6>			
 		</div>
 	</a>
 </div>

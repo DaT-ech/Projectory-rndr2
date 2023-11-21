@@ -29,7 +29,7 @@
 	<script src="/javascript/project-script.js" defer></script>
 	<script src="/javascript/login-info-fetch.js" defer></script>
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-	
+
 	<script src="/javascript/theme-switch-script.js" defer></script>
 
 	<script src="/javascript/vue-scripts/user-detail-vue.js" defer></script>
@@ -68,41 +68,52 @@
 					<!--v-on:keyup="fetchSearchableData(this.$data.name = $event.target.value")-->
 
 					<ul class="dropdown-menu" style="z-index: 1002;">
-						<li><span v-if="fetchedSearchableData.length == 0">no results found</span></li>
+						<li><span v-if="noResult">no results found</span></li>
 
-						<div v-if="searchLoading" class="dot-spinner align-center" style="top: 20px">
-							<div class="dot-spinner__dot"></div>
-							<div class="dot-spinner__dot"></div>
-							<div class="dot-spinner__dot"></div>
-							<div class="dot-spinner__dot"></div>
-							<div class="dot-spinner__dot"></div>
-							<div class="dot-spinner__dot"></div>
-							<div class="dot-spinner__dot"></div>
-							<div class="dot-spinner__dot"></div>
-						</div>
+						<template v-if="searchLoading" style="top: 20px">
+							<span class="dot-spinner align-center"  th:fragment="dot-spinner-loader">
+								<div class="dot-spinner__dot"></div>
+								<div class="dot-spinner__dot"></div>
+								<div class="dot-spinner__dot"></div>
+								<div class="dot-spinner__dot"></div>
+								<div class="dot-spinner__dot"></div>
+								<div class="dot-spinner__dot"></div>
+								<div class="dot-spinner__dot"></div>
+								<div class="dot-spinner__dot"></div>
+							</span>
+						</template>
 
 						<li v-for="searchItems in fetchedSearchableData" class="border-bottom border-bottom-secondary">
 
 							<!--displays recently searched items for account at first then data from db-->
 							<template v-if="searchItems.searchResultType == 'user'">
-								<a :href="`/user/${searchItems.searchItemDescription}`" class="dropdown-item d-flex justify-content-between  p-0 px-1
-									d-flex justify-content-between no-text-decoration inherit-color inherit-color-hover">
-									<span>
-										<span class="fs-12 d-block pb-0" style="">{{searchItems.searchItemTitle}}</span>
-										<span class="fs-11 pt-0" style="">@{{searchItems.searchItemDescription}}</span>
+
+								<a :href="`/user/${searchItems.searchItemDescription}`" class="d-flex dropdown-item p-0 px-1
+									no-text-decoration inherit-color inherit-color-hover search-result">
+									<span class="ti-user align-self-center me-1"></span>
+									<span class="d-flex justify-content-between">
+										<span>
+											<span class="fs-12 d-block pb-0"
+												style="">{{searchItems.searchItemTitle}}</span>
+											<span class="fs-11 pt-0"
+												style="">@{{searchItems.searchItemDescription}}</span>
+										</span>
+
+										<span role="button" :value="searchItems.searchItemDescription"
+											title="remove member"
+											class="search-result-arrow align-self-center fa-solid fa-arrow-right btn btn-sm btn-secondary align-right">
+											<!--@click="removeProjectMember(project.projectId, member.username, $event)">-->
+										</span>
 									</span>
-
-									<span role="button" :value="searchItems.searchItemDescription" title="remove member"
-										class=" align-self-center fa-solid fa-arrow-right btn btn-sm btn-secondary align-right">
-										<!--@click="removeProjectMember(project.projectId, member.username, $event)">-->
-									</span></a>
-							</template>
-
-						</li>
-					</ul>
+								</a>
 				</span>
-				<!--Search button-->
-				<span role="button" class="top-search-btn d-inline fa-solid fa-magnifying-glass"></span>
+				</template>
+
+				</li>
+				</ul>
+			</span>
+			<!--Search button-->
+			<span role="button" class="top-search-btn d-inline fa-solid fa-magnifying-glass"></span>
 			</span>
 			<script src="/javascript/vue-scripts/search-vue.js"></script>
 

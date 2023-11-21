@@ -6,6 +6,7 @@ Vue.createApp({
 		return{
 			fetchedSearchableData: [],
 			searchLoading: false,
+			noResult: false,
 		}
 	},
 	created(){
@@ -13,15 +14,20 @@ Vue.createApp({
 	},
 	methods:{
 		fetchSearchableData(keyword, event){
-			//alert("search kw: "+keyword)
+			this.noResult = false;
 			if(keyword != ''){
 				searchLoading = true;
 			fetch(searchUrl+keyword)
 				.then(response => response.json())
 				.then(data => {
 					this.fetchedSearchableData = data;
+					if(data.length == 0)
+					this.noResult = true;
 					searchLoading = false;
 				})
+			}
+			else{
+				this.noResult = false;
 			}
 		},
 		searchThroughData(){

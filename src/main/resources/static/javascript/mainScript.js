@@ -38,12 +38,11 @@ function displayEventNotification(currentPathVar){
 	displaySigninForm('login')
 	}
 	
-	if(currentPathVar == "?reg=err" || currentPathVar == "?reg=success"){
-	displaySigninForm('login')
-	}
-	
-	if(currentPathVar == "?reg=err" || currentPathVar == "?reg=err"){
+	if(currentPathVar == "?reg=err"){
 	displaySigninForm('signup')
+	}
+	if(currentPathVar == "?reg=success"){
+	displaySigninForm('login')
 	}
 }
 
@@ -65,37 +64,22 @@ function displaySigninForm(type) {
 	const formContainer = document.getElementById("login-signup-form");
 	const signInForm = document.getElementById("sign-in-form");
 	const signUpForm = document.getElementById("sign-up-form");
-	formContainer.style.visibility = "visible";
-	formContainer.style.opacity = "1";
+	formContainer.classList.add("show");
 	if (type == "login") {
-
-		//document.querySelector("#login-signup-form").style.height = "600px";		
-		//form.style.display = "block";
-		//form.style.height = "auto";	
-
-		//signUpForm.style.opacity = "0";
-		signUpForm.style.display = "none";
-
-		signInForm.style.display = "block";
-		signInForm.style.opacity = "1";
+		signUpForm.classList.remove("show");
+		signInForm.classList.add("show");
 		document.getElementById("username-input").setAttribute("autofocus");
 	}
 	else if (type == "signup") {
-		//signInForm.style.opacity = "0";
-		signInForm.style.display = "none";
-
-		signUpForm.style.display = "block";
-		signUpForm.style.opacity = "1";
+		signInForm.classList.remove("show");
+		signUpForm.classList.add("show");
 	}
-
-
 }
 function closeSigninForm() {
 	const formContainer = document.getElementById("login-signup-form");
 	const signInForm = document.getElementById("sign-in-form");
-	const signUpForm = document.getElementById("sign-up-form");		
-	formContainer.style.opacity = "0";
-	formContainer.style.visibility = "collapse";
+	const signUpForm = document.getElementById("sign-up-form");	
+	formContainer.classList.remove("show");
 }
 
 

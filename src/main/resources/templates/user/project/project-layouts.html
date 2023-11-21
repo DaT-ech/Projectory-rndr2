@@ -39,7 +39,7 @@
 						<span class="btn-group btn-group-sm project-owner-indicator info-tag-dark 
 					info-tag-dark-sm float-end fs-8 p-0">
 							<span role="button"
-								class="btn btn-success minimalist-btn minimalist-btn-lighter minimalist-btn-lighter2 btn-sm dropdown-toggle m-0 p-0 px-1 fs-8"
+								class="btn btn-success  btn-sm dropdown-toggle m-0 p-0 px-1 fs-8"
 								type="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
 								<template v-if="projectMembers[project.projectId]">
 									{{projectMembers[project.projectId].length}}
@@ -52,7 +52,7 @@
 										<span>
 											<span class="fs-10 d-block pb-0" style="">{{member.firstName}}
 												{{member.lastName}}</span>
-											<span class="fs-9 pt-0" style="">@ {{member.username}}</span>
+											<span class="fs-9 pt-0" style="">@{{member.username}}</span>
 										</span>
 
 										<span role="button" :value="member.username" title="remove member"
@@ -105,8 +105,13 @@
 						</div>
 
 						<div :id="`add-member-list-container-${project.projectId}`"
-							class="add-project-member-list-container custom-scrollbar-style-2 overflow-ver-scroll">
+							class="add-project-member-list-container custom-scrollbar-style-2 overflow-ver-scroll text-center">
 							<!--loop through connections list-->
+							<span v-if="connectsList.length == 0" 
+							class="ti-info-alt p-1 word-wrap fs-10">
+							You have no connections yet. 
+								Search &amp; add some connections first.</span>
+							
 							<div v-for="conn in connectsList" :key="conn.connectionId"
 								class="add-project-member-list-item-box-container">
 
@@ -133,8 +138,9 @@
 							style="height: 0px;">
 							<div class="form form-container p-1" :id="`${project.projectId}`">
 								<input type="hidden" :value="project.projectId" id="proj-id">
-								<input type="text" placeholder="Task title"
+								<input type="text" placeholder="Task title *"
 									class="form-control form-control-sm mb-1 task-title" id="task-title">
+									
 								<input type="text" placeholder="Task description"
 									class="form-control form-control-sm mb-1 task-description" id="task-description">
 
@@ -150,8 +156,13 @@
 								</div>
 
 
-								<input type="button" value="add" class="btn btn-primary-golden btn-sm"
+								<button class="btn btn-primary-golden btn-sm"
 									@click="addTaskToProject(project.projectId)">
+									<template v-if="addingProjectTask" style="height:1px; width: 1px;">
+										<span th:replace="user/user-layouts :: dot-spinner-loader"></span>
+									</template>
+									 Add
+									</button>
 							</div>
 						</div>
 
@@ -159,7 +170,7 @@
 
 
 
-					<div class="project-modal-boxes-inner p-1 my-2 mx-2 align-self-start">
+					<div class="project-modal-boxes-inner project-task-modal-view p-1 my-2 mx-2 align-self-start">
 						<h5 class="project-task-title mt-2 ms-2">Tasks</h5>
 						<!--display Project tasks-->
 						<hr />
@@ -274,7 +285,11 @@
 
 
 	<div class="col-md-12 mb-2">
-		<input @click="addProject()" type="submit" value="Create Project" class="btn btn-primary-golden btn-sm mt-3">
+		<button @click="addProject()" class="btn btn-primary-golden btn-sm mt-3">
+			<template v-if="creatingProject" width="50%" height="30%">
+				<span th:replace="user/user-layouts :: dot-spinner-loader"></span>
+			</template> Create Project
+		</button></button>
 	</div>
 </div>
 
@@ -313,35 +328,45 @@
 
 		<!--</form>-->
 	</div>
-	<script src="/javascript/vue-scripts/dashboard-project-vue.js" defer></script>
+	<!--<script src="/javascript/vue-scripts/dashboard-project-vue.js" defer></script>-->
 </div>
 <!--Project display modal end-->
+
+
 
 <!-- Projects card -->
 <div th:fragment="project-dashboard-card" class="card user-dashboard-cards custom-scrollbar-style" style="width: 18rem;"
 	onclick="displayViewingModal(1)" data-aos="zoom-in">
+	<div id="project-card">
+		
+	
 	<div class="card-header d-flex">
 		<span class="dashboard-card-img-top mx-2 mt-1 fa-solid fa-diagram-project" alt="project icon"></span>
 		<h5 class="card-title dashboard-card-title">Project</h5>
 	</div>
 	<div class="card-body p-1">
 
-		<p class="card-text fw-lighter item-count-check" th:text="${projectCount}"></p>
+		<!--<p class="card-text fw-lighter item-count-check">{{projects.length}}</p>-->
 		<div class="">
-			<div th:object="${project}" class="dashboard-card-content-container-inner m-0 custom-scrollbar-style-3">
-				<div th:each="proj : ${project}">
-					<div th:id="${proj.projectId}" class="dashboard-card-content-items m-1 p-1">
-						<span id="projectNumber" class="badge text-bg-warning itemNumber">0</span>
+			
+			<div class="dashboard-card-content-container-inner m-0 custom-scrollbar-style-3">
+				<div v-for="proj in projects">
+					<div :id="proj.projectId" class="dashboard-card-content-items m-1 p-1">
+					<!--	<span id="projectNumber" class="badge text-bg-warning itemNumber">0</span>-->
+						<span id="projectNumber" class="badge text-bg-warning itemNumber ti-clipboard pe-0">&nbsp;</span>
+						
 						<!--<span th:text = "${item.todoItemId}" class="badge text-bg-warning"></span>-->
-						<span th:text="${proj.title}" id=""></span>
+						<span id="">{{proj.title}}</span>
 						<br />
-						<span th:text="${proj.description}"
-							class="fw-lighter dashboard-card-content-description p-1 ps-2 d-block"></span>
-						<span th:class="project-status-label-card+' '+project-status-label +' '+${proj.status}"
-							th:text="${proj.status}"></span>
+						<span class="fw-lighter dashboard-card-content-description p-1 ps-2 d-block">
+							{{proj.description}}</span>
+						<span :class="`project-status-label-card project-status-label ${proj.status}`">
+							{{proj.status}}</span>
 					</div>
 				</div>
 			</div>
+			
+			
 		</div>
 		<button
 			class="minimalist-btn minimalist-btn-lighter minimalist-btn-lighter2 btn-sm create-project-btn create-project-btn-card ms-2 mt-2"
@@ -349,7 +374,13 @@
 			Project</button>
 
 	</div>
+	
+	</div>
+	<!--<script src="/javascript/vue-scripts/dashboard-project-card-vue.js"></script>-->
 </div>
+
+
+
 
 
 <!-- Project tasks card-->
@@ -394,7 +425,7 @@
 
 		</div>
 
-		<script src="/javascript/vue-scripts/dashboard-vue.js" defer></script>
+		<!--<script src="/javascript/vue-scripts/dashboard-vue.js" defer></script>-->
 		<button class="minimalist-btn minimalist-btn-lighter minimalist-btn-lighter2 btn-sm btn-warning mt-2">Go to
 			board</button>
 	</div>

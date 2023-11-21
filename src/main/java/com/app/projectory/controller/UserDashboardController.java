@@ -289,6 +289,13 @@ public class UserDashboardController {
 	public @ResponseBody int terminateConnection(@PathVariable long connectionId, Authentication auth) {
 		return connectionsDao.terminateConnectionByConnectionId(connectionId);
 	}
+	
+	//get suggested users
+	@GetMapping("/connection/suggested/{resultLimit}")
+	public @ResponseBody List<PublicUserPersonalDetailDto> getSuggestedConnections(@PathVariable("resultLimit") int resultLimit, Authentication auth){
+		long authUserId = userServ.getUserId(auth);
+		return userDao.getSuggestedUsers(authUserId, resultLimit);
+	}
 				
 
 }

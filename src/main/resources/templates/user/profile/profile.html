@@ -2,9 +2,9 @@
 	<div>
 		<aside th:replace="user/user-layouts :: side-menu"></aside>
 
-		<section class="profile-content-inner d-flex gap-4 flex-wrap">
+		<section class="profile-content-inner d-flex gap-4 flex-wrap" id="user-details">
 
-			<section class="profile-main-body  flex-fill" id="user-details">
+			<section class="profile-main-body  flex-fill">
 
 				<div class="profile-header-section small-rounded-containers">
 					<section th:replace="user/profile/profile-layouts::profile-banner"></section>
@@ -24,7 +24,7 @@
 					<div class="profile-connections flex-fill ">
 
 						<h5>Connections({{userConnectsCount}})</h5>
-						
+
 
 						<h6 v-if="isOwnAccount == 'true'" class="text-center">Pending Connection Request</h6>
 
@@ -45,15 +45,15 @@
 									aria-selected="false">Received Request</button>
 							</li>
 						</ul>
-						
-						
-						
+
+
+
 						<div class="public-data-list public-prof-list custom-scrollbar-style-2">
 							<!--v-if="userConnectsCount != 0">-->
 
 							<div th:replace="user/profile/profile-layouts::pending-user-connections-list"></div>
 							<hr />
-							
+
 							<!--<div th:replace="user/profile/profile-layouts::approved-user-connections-list"></div>-->
 						</div>
 
@@ -72,11 +72,10 @@
 				<div class="small-rounded-containers p-5 mt-3">
 					Socials
 				</div>
-				<div class="small-rounded-containers p-5 mt-3">
-					Similar profiles
-					suggested by the projects they work on
-					and connection list
-				</div>
+				<div class="small-rounded-containers mt-3 p-1">
+
+					<div th:replace="user/profile/profile-layouts::suggested-connections"></div>
+
 			</aside>
 
 			<section class="metrics-and-report pt-2 mt-2">

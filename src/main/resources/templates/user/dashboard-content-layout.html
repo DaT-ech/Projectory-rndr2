@@ -2,20 +2,22 @@
 	<section class="dashboard-area d-flex">
 		<aside th:replace="user/user-layouts :: side-menu"></aside>
 
-		<div id="viewing-modal-container" class="modal-backdrop-blur">
-			<div id="viewing-modal" class="mt">
-				<span class="viewing-modal-exit-btn fa-solid fa-xmark p-1" onclick="closeViewingModal()"></span>
 
-				<div class="viewing-modal custom-scrollbar-style">
 
-					<div th:replace="user/todo/todoLayouts :: todo-list-modal-content"></div>
-					<div th:replace="user/project/project-layouts :: project-list-modal-content"></div>
+
+		<div class="dashboard-cards-container d-flex justify-content-evenly flex-wrap mt-4" id="dashboard-area">
+
+			<div id="viewing-modal-container" class="modal-backdrop-blur">
+				<div id="viewing-modal" class="mt">
+					<span class="viewing-modal-exit-btn fa-solid fa-xmark p-1" onclick="closeViewingModal()"></span>
+
+					<div class="viewing-modal custom-scrollbar-style">
+
+						<div th:replace="user/todo/todoLayouts :: todo-list-modal-content"></div>
+						<div th:replace="user/project/project-layouts :: project-list-modal-content"></div>
+					</div>
 				</div>
 			</div>
-		</div>
-
-
-		<div class="dashboard-cards-container d-flex justify-content-evenly flex-wrap mt-4">
 
 			<div th:replace="user/project/project-layouts :: project-dashboard-card"></div>
 			<div th:replace="user/todo/todoLayouts :: todo-list-dashboard-card"></div>
@@ -57,6 +59,7 @@
 				</div>
 			</div>
 		</div>
+		<script src="/javascript/vue-scripts/dashboard-project-vue.js" defer></script>
 	</section>
 
 
@@ -97,7 +100,7 @@
 				</div>-->
 			</div>
 		</main>
-<script src="/javascript/charts-project.js" defer></script>
+		<script src="/javascript/charts-project.js" defer></script>
 	</section>
 
 	<!--<script>

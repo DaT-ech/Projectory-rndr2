@@ -12,7 +12,9 @@ const receivedConnectionRequestUrl = '/user/connection/request/received/';
 
 const acceptConnectionRequestUrl = '/user/connection/request/accept/';
 const rejectConnectionRequestUrl = '/user/connection/request/reject/';
-const connectionSenderReceiverId = '/user/connection/SenderReceiverId/'
+const connectionSenderReceiverId = '/user/connection/SenderReceiverId/';
+
+const suggestedConnectionsUrl = '/user/connection/suggested/';
 
 //userAppElementExists = document.getElementById('user-app-element');
 userAppElementExists = document.getElementById('user-details');
@@ -41,7 +43,8 @@ const userDetail = Vue.createApp({
 			receivedConnections: [],
 			userConnectsCount: 0,
 			connectionStatus:'',
-			connectionSenderReceiverId:{}
+			connectionSenderReceiverId:{},
+			suggestedConnections: [],
 
 		}
 	},
@@ -50,7 +53,8 @@ const userDetail = Vue.createApp({
 		//alert(isOwnAccount)
 		this.getUserDetail(profileUsername);
 		this.getUserProjects(profileUsername);
-		this.getUserConnections(profileUsername);		
+		this.getUserConnections(profileUsername);
+		this.getSuggestedConnections(5);		
 		//alert(this.authUsername)
 	},
 	updated() {
@@ -266,6 +270,22 @@ const userDetail = Vue.createApp({
 						} 						
 					})
 			});
+	},
+	getSuggestedConnections(resultLimit){
+		fetch(suggestedConnectionsUrl+resultLimit)
+			.then(response => response.json())
+			.then(data => {
+				 this.suggestedConnections = data
+				 
+				 if (data.profilePicture == null) {
+						//alert(data.firstName[0])
+						this.authProfilePicture = data.firstName[0].toUpperCase();
+					} else {
+						this.authProfilePicture = data.profilePicture
+					}
+			}
+			
+			)
 	}
 	
 	

@@ -1,6 +1,7 @@
 package com.app.projectory.controller;
 
 import java.util.List;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -8,6 +9,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -52,5 +55,26 @@ public class UserAuthController {
 		  redAttr.addFlashAttribute("loginStatus", indicator);
 	  //return "redirect:/"; 
 		  return "redirect:/?reg="+indicator; 
+	  }
+	  
+	  @GetMapping("/usernameAvailability/{chosenUsername}")
+	  public @ResponseBody String usernameAvailabilityChecker(@PathVariable("chosenUsername") String username) {
+		  if(username != "") {
+			  String msg = "Available";
+			  Random rand = new Random();
+			  int upperbound = 355; //no meaning to the number
+			  if(userDao.findByUsername(username) != null) {
+				  
+				  do {
+					  int randomInt = rand.nextInt(upperbound); 
+					  msg = username+randomInt;
+				  }
+				  while(userDao.findByUsername(msg) != null);
+			  }
+			  return msg;
+		  }
+		  else {
+			  return null;
+		  }
 	  }
 }

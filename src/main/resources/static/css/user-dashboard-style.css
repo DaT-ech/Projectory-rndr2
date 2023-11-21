@@ -674,6 +674,10 @@
 	border-top: 3px solid rgb(118, 187, 118) !important;
 	border-bottom: 3px solid rgb(118, 187, 118) !important;
 }
+.project-task-modal-view{
+	width: 40%;
+	min-width: max-content;
+}
 
 .project-modal-boxes-extra-info {
 	border: 1px solid rgb(94, 92, 100);

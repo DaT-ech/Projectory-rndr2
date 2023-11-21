@@ -36,7 +36,7 @@ public class WebpageErrorController implements ErrorController{
 	}
 	
 	/*
-	 * @Override public String getErrorPath() { return "/error"; }
+	 * @Override public String getErrorPath() { return "error"; }
 	 */
 	
 }

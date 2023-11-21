@@ -31,19 +31,24 @@ const projectVue = Vue.createApp({
 			connectsList: [],
 			projectMembers: {},
 			currentUserDetail: [],
-			projectTasks: {}
-			
-				
+			projectTasks: {},
+			addingProjectTask: false,
+			loadingProjects: false,
+			creatingProject: false,
+
+			projectTasksOnBoardPeekView: [],
+			projectOnBoardCount: 0
 
 
 		}
 	},
 	created() {
 		this.projectListCount = 0,
-		this.getProjects(),
+			this.getProjects(),
 			this.getProjectCount(),
-			this.getCurrentUserDetail()
-			
+			this.getCurrentUserDetail(),
+			this.getTasksListOnAgileBoard()
+
 		//this.getProjectTasks();
 
 	},
@@ -70,10 +75,13 @@ const projectVue = Vue.createApp({
 				.then(data => this.currentUserDetail = data)
 		},
 		getProjects() {
+			this.loadingProjects = true;
 			fetch(getProjectsUrl)
 				.then(response => response.json())
 				.then(data => {
 					this.projects = data
+					//notift dashboard project card to update
+					window.localStorage.setItem("projectHasBeenUpdated", true);
 
 					this.projects.forEach(project => {
 						this.getProjectMembers(project.projectId, true)
@@ -82,10 +90,23 @@ const projectVue = Vue.createApp({
 							.then(response => response.json())
 							.then(data => {
 								project.projectTasks = data;
+								this.loadingProjects = false;
 							})
 					})
+
 				})
 
+		},
+		updateProjectTasks(projectId){
+			this.projects.forEach(project => {
+
+						fetch(getProjectTasks + "?project=" + project.projectId)
+							.then(response => response.json())
+							.then(data => {
+								project.projectTasks = data;
+								//this.loadingProjects = false;
+							})
+					})
 		},
 		getProjectCount() {
 			//get all projects count
@@ -130,6 +151,7 @@ const projectVue = Vue.createApp({
 				toggleNotification("error", "Project title can't be blank!")
 			}
 			else {
+				this.creatingProject = true;
 				fetch(addProjectUrl + '?title=' + title.value + '&description=' + description.value + '&status=' + status.value)
 					.then(response => response.json())
 					.then(data => {
@@ -138,7 +160,7 @@ const projectVue = Vue.createApp({
 						description.value = "";
 						this.getProjects();
 						this.getProjectCount();
-
+						this.creatingProject = false;
 					})
 			}
 		},
@@ -236,42 +258,50 @@ const projectVue = Vue.createApp({
 		},
 		isNotInProjectMembers(username, projectId) {
 			for (let member of this.projectMembers[projectId]) {
-				if(member.username === username){					
+				if (member.username === username) {
 					return false; // Username exists in project members
 				}
-				}
+			}
 			return true; // Username does not exist in project members
 		},
 		addTaskToProject(projectId) {
-			//alert("hola "+projectId)			
-			let currentTaskForm = "add-project-task-form-" + projectId;
-			let taskTitle = document.querySelector("#" + currentTaskForm + " #task-title").value;
-			let taskDescription = document.querySelector("#" + currentTaskForm + " #task-description").value;
-			let taskStatus = document.querySelector("#" + currentTaskForm + " #task-status").value;
-			fetch(addProjectTaskUrl + "?title="+taskTitle+"&desc="+taskDescription+"&project="+projectId+"&status="+taskStatus)
-				.then(response => response.json())
-				.then(data => {
-					if(data == 1){
-						toggleNotification("success", "Task has been added to project.")
-						taskDescription = " ";
-						taskTitle = " ";
-						taskStatus = " ";
-						this.getProjects();
-						
-					}
-					else
-						toggleNotification("error", "Unable to add task to project.")
-				})
+			var currentTaskForm = "add-project-task-form-" + projectId;
+			var taskTitle = document.querySelector("#" + currentTaskForm + " #task-title").value;
+			var taskDescription = document.querySelector("#" + currentTaskForm + " #task-description").value;
+			var taskStatus = document.querySelector("#" + currentTaskForm + " #task-status").value;
+			if (taskTitle == "") {
+				toggleNotification("error", "Task title can't be empty.")
+			}
+			else {
+				this.addingProjectTask = true;
+				fetch(addProjectTaskUrl + "?title=" + taskTitle + "&desc=" + taskDescription + "&project=" + projectId + "&status=" + taskStatus)
+					.then(response => response.json())
+					.then(data => {
+						if (data == 1) {
+							toggleNotification("success", "Task has been added to project.")
+							document.querySelector("#" + currentTaskForm + " #task-title").value = "";
+							document.querySelector("#" + currentTaskForm + " #task-description").value = "";
+							taskStatus = document.querySelector("#" + currentTaskForm + " #task-status").value = "not started";
+							this.addingProjectTask = false;
+							//this.getProjects();
+							this.updateProjectTasks();
+
+						}
+						else
+							toggleNotification("error", "Unable to add task to project.")
+					})
+			}
 
 
 		},
 		deleteTaskFromProject(taskId) {
-			fetch(deleteProjectTaskUrl+taskId)
+			fetch(deleteProjectTaskUrl + taskId)
 				.then(response => response.json())
 				.then(data => {
-					if(data == 1){
+					if (data == 1) {
 						toggleNotification("success", "Task has been deleted from project.")
-						this.getProjects();
+						//this.getProjects();
+						this.updateProjectTasks();
 					}
 					else
 						toggleNotification("error", "Unable to delete task from project.")
@@ -340,12 +370,28 @@ const projectVue = Vue.createApp({
 				trigger.classList.remove('fa-compress');
 				trigger.classList.add('fa-expand');
 			}
+		},
+
+		//methods for peek view cards
+		getTasksListOnAgileBoard() {
+			const projectId = window.localStorage.getItem("agile-board-selected-project")
+			fetch(getProjectTasksUrl + "?project=" + projectId)
+				.then(response => response.json())
+				.then(data => {
+					//alert(data[0].taskName)
+					this.projectTasksOnBoardPeekView = data;
+					this.projectOnBoardCount = data.length;
+					//window.localStorage.setItem("agile-board-selected-project", projectId);
+				})
 		}
 
 	}
 
 })
-projectVue.mount("#project-list-modal-content")
+projectVue.mount("#dashboard-area")
+/*projectVue.mount("#project-list-modal-content")*/
+
+
 /*if(document.getElementById("projects-holder-container")){
 projectVue.mount("#projects-holder-container")
 }*/
