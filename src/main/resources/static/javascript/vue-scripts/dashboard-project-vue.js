@@ -5,6 +5,7 @@ const getProjectsUrl = '/project/getProjects';
 const getProjectCountUrl = '/project/getProjectCount';
 const getOwnProjectsCount = '/project/getOwnProjectsCount';
 const getJoinedProjectsCount = '/project/getJoinedProjectsCount';
+const updatedProjectStatusUrl = '/project/status/';
 
 const addProjectUrl = '/project/add-project';
 const deleteProjectUrl = '/project/delete';
@@ -27,6 +28,7 @@ const projectVue = Vue.createApp({
 	data() {
 		return {
 			projects: [],
+			projectStatus: {},
 			projectCount: [],
 			connectsList: [],
 			projectMembers: {},
@@ -82,9 +84,10 @@ const projectVue = Vue.createApp({
 				.then(data => {
 					this.projects = data
 					//notift dashboard project card to update
-					window.localStorage.setItem("projectHasBeenUpdated", true);
-
+					window.localStorage.setItem("projectHasBeenUpdated", true);  //why?
+					
 					this.projects.forEach(project => {
+						 this.projectStatus[project.projectId] = project.status;
 						this.getProjectMembers(project.projectId, true)
 
 						fetch(getProjectTasks + "?project=" + project.projectId)
@@ -98,12 +101,26 @@ const projectVue = Vue.createApp({
 				})
 
 		},
+		
+		updateProjectStatus(projectId){
+			fetch(updatedProjectStatusUrl+projectId)
+				.then(response => response.text())
+				.then(data=>{
+					this.projectStatus[projectId] = data;
+					//if(data == "Completed")
+						//toggleNotification("success", "Project completed!");
+						//trigger celebration confetti
+				})
+			
+		}
+		,
 		updateProjectTasks(projectId) {
+			this.updateProjectStatus(projectId);
 			this.projects.forEach(project => {
 
 				fetch(getProjectTasks + "?project=" + project.projectId)
 					.then(response => response.json())
-					.then(data => {
+					.then(data => {						//
 						project.projectTasks = data;
 						//this.loadingProjects = false;
 					})
@@ -289,7 +306,7 @@ const projectVue = Vue.createApp({
 							taskStatus = document.querySelector("#" + currentTaskForm + " #task-status").value = "not started";
 							this.addingProjectTask = false;
 							//this.getProjects();
-							this.updateProjectTasks();
+							this.updateProjectTasks(projectId);
 
 						}
 						else
@@ -299,14 +316,14 @@ const projectVue = Vue.createApp({
 
 
 		},
-		deleteTaskFromProject(taskId) {
+		deleteTaskFromProject(taskId, projectId) {
 			fetch(deleteProjectTaskUrl + taskId)
 				.then(response => response.json())
 				.then(data => {
 					if (data == 1) {
 						toggleNotification("success", "Task has been deleted from project.")
 						//this.getProjects();
-						this.updateProjectTasks();
+						this.updateProjectTasks(projectId);
 					}
 					else
 						toggleNotification("error", "Unable to delete task from project.")
@@ -354,16 +371,18 @@ const projectVue = Vue.createApp({
 				for (let box of allBoxes) {
 					box.classList.replace('project-modal-boxes-expanded', 'project-modal-boxes-default');
 				}
-				for (let btns of allTriggerBtns) {
-					btns.classList.remove('fa-compress');
-					btns.classList.add('fa-expand');
-					btns.setAttribute("title", "Expand");
+				for (let btn of allTriggerBtns) {
+					btn.classList.remove('fa-compress');
+					btn.classList.add('fa-expand');
+					btn.setAttribute("title", "Expand");
+					btn.parentElement.classList.remove("expanded");
 				}
 
 				trigger.setAttribute("title", "Minimize");
 				div.classList.remove("project-modal-boxes-default");
 				div.classList.add("project-modal-boxes-expanded");
-				div.parentElement.style.width = "100%";
+				//div.parentElement.style.width = "100%";
+				div.parentElement.classList.add("expanded");
 				div.scrollIntoView();
 
 				trigger.classList.remove('fa-expand');
@@ -373,7 +392,8 @@ const projectVue = Vue.createApp({
 				trigger.setAttribute("title", "Expand");
 				div.classList.add("project-modal-boxes-default");
 				div.classList.remove("project-modal-boxes-expanded");
-				div.parentElement.style.width = "fit-content";
+				//div.parentElement.style.width = "fit-content";
+				div.parentElement.classList.remove("expanded");
 				trigger.classList.remove('fa-compress');
 				trigger.classList.add('fa-expand');
 			}

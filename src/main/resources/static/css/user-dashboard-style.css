@@ -650,6 +650,13 @@
 
 .item-display-table {}
 
+.project-modal-boxes-container{
+	width: max-content;
+}
+.project-modal-boxes-container.expanded{
+	width: 100% !important;
+}
+
 .project-modal-boxes {
 	border-radius: 0.3rem;
 	transition: 0.2s ease-in-out;

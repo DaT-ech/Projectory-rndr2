@@ -78,7 +78,8 @@
 						<span id="">&nbsp; {{project.title}}</span>
 						<br />
 						<span class="fw-lighter">{{project.description}}</span>
-						<span :class="`d-block project-status-label ${project.status}`">{{project.status}}</span>
+						<!--<span :class="`d-block project-status-label ${project.status}`">{{project.status}}</span>-->
+						<span :class="`d-block project-status-label ${projectStatus[project.projectId]}`">{{projectStatus[project.projectId]}}</span>
 						<br />
 
 
@@ -109,7 +110,7 @@
 							class="add-project-member-list-container custom-scrollbar-style-2 overflow-ver-scroll text-center">
 							<!--loop through connections list-->
 							<span v-if="connectsList.length == 0" class="ti-info-alt p-1 word-wrap fs-10">
-								You have no connections yet.
+								You have no connections yet.<br/>
 								Search &amp; add some connections first.</span>
 
 							<div v-for="conn in connectsList" :key="conn.connectionId"
@@ -190,12 +191,12 @@
 												<span class="fs-10 d-block">{{task.taskDescription}}</span>
 											</span>
 											<span class="border-start border-start-secondary ms-1">
-												<span class="ms-5 task-owner"
+												<span class="ms-5 task-owner fs-9"
 													v-if="task.assigneeUsername!=null">@{{task.assigneeUsername}}</span>
 												<span class="ms-5 task-owner pe-5"
 													v-if="task.assigneeUsername==null">...</span>
 												<span class="fa-solid fa-trash-can btn btn-danger ms-1 fs-10 p-1 me-2"
-													@click="deleteTaskFromProject(task.taskId)"></span>
+													@click="deleteTaskFromProject(task.taskId, task.projectId)"></span>
 												<span
 													:class="`ms-5 d-block ${task.status}-stage`">{{task.status}}</span>
 

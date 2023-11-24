@@ -92,6 +92,16 @@ public class ProjectTasks {
 	public void setDeadline(String deadline) {
 		this.deadline = deadline;
 	}
+
+	public long getAssignee() {
+		return assignee;
+	}
+
+	public void setAssignee(long assignee) {
+		this.assignee = assignee;
+	}
+	
+	
 	
 	
 }

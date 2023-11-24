@@ -67,6 +67,7 @@ public interface ProjectRepository extends CrudRepository<Project, Long>{
 			+ "	WHERE p.project_owner_user_id = ?1 OR p.project_id = m.project_id", nativeQuery = true)
 	List<Project> findProjectListByUser(long userId); 
 	
+	
 	@Query(value = "SELECT DISTINCT p.*, project_owner_user_id as projectOwnerUserId,\n"
 			+ "creation_date as creationDate, username as projectOwnerUsername, \n"
 			+ "p.project_id as projectId FROM project p \n"
@@ -74,6 +75,11 @@ public interface ProjectRepository extends CrudRepository<Project, Long>{
 			+ "LEFT JOIN Users us on us.user_id = p.project_owner_user_id\n"
 			+ "WHERE p.project_owner_user_id = ?1 OR p.project_id = m.project_id", nativeQuery = true)
 	List<ProjectDto> findProjectListByUserIncUsername(long userId); 
+	
+	
+	@Query(value = "SELECT project_id from project_tasks\n"
+			+ "WHERE task_id = ?1", nativeQuery = true)
+	long findProjectIdByProjectTask(long projectTaskId); 
 	
 	
 //	@Query(value = "SELECT pt.task_id taskId, pt.deadline, pt.status, pt.task_description taskDescription, \n"
@@ -220,7 +226,13 @@ public interface ProjectRepository extends CrudRepository<Project, Long>{
 	int deleteProjectMembersOfaProject(long projectId, long authProjectOwner);
 	
 	
+	@Transactional
+	@Modifying
+	@Query(value="UPDATE project SET status = ?1 WHERE project_id = ?2", nativeQuery = true)
+	int updateProjectStatus(String newStatus, long projectId);
 	
+	@Query(value="SELECT status FROM project WHERE project_id = ?1", nativeQuery = true)
+	String getStatusOfProject(long projectId);
 	
 	
 }

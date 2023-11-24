@@ -24,30 +24,34 @@ import com.app.projectory.dto.ProjectTasksDto;
 import com.app.projectory.entity.Project;
 import com.app.projectory.entity.ProjectTasks;
 import com.app.projectory.entity.Users;
+import com.app.projectory.service.ProjectService;
 import com.app.projectory.service.userAccountService;
 
 @Controller
 @RequestMapping("/project")
 public class ProjectController {
-	
+
 	@Autowired
 	private ProjectRepository projDao;
 	@Autowired
 	private ProjectTaskRepository projTaskDao;
 	@Autowired
 	private userAccountService userServ;
-	@Autowired private UsersRepository userRepo;
-	
+	@Autowired
+	private UsersRepository userRepo;
+	@Autowired
+	private ProjectService projServ;
+
 	@GetMapping("/board")
-	public String serveBoard(Model model, Authentication auth){
+	public String serveBoard(Model model, Authentication auth) {
 		model.addAttribute("currentUserDetail", userServ.getCurrentUserDetail(auth));
 		model.addAttribute("currentPage", "board");
 		/* model.addAttribute("user", auth.getName()); */
 		return "user/user-content-container";
 	}
-	
+
 	@GetMapping("add-project")
-	public @ResponseBody int addTodoUsingJs(@RequestParam String title, @RequestParam String description, 
+	public @ResponseBody int addTodoUsingJs(@RequestParam String title, @RequestParam String description,
 			@RequestParam String status, Authentication auth) {
 		try {
 			Project project = new Project();
@@ -55,188 +59,198 @@ public class ProjectController {
 			project.setDescription(description);
 			project.setStatus(status);
 			project.setProjectOwner(userServ.getCurrentUserDetail(auth));
-			projDao.save(project);			
-			
+			projDao.save(project);
+
+		} catch (Exception error) {
+			return 0; // "project creation - error
 		}
-		catch(Exception error) {
-			return 0; //"project creation - error
-		}
-		return 1; //"project creation - success"
-		
+		return 1; // "project creation - success"
+
 	}
-	
+
 	/*
 	 * @GetMapping("/tess") public @ResponseBody int tess(Authentication auth) {
 	 * long authUserId = userServ.getUserId(auth); long projectId = 57; return
 	 * 
 	 * }
 	 */
-	
+
 	@GetMapping("/delete")
 	public @ResponseBody int deleteProject(@RequestParam("project") long projectId, Authentication auth) {
-		long  authUserId = userServ.getUserId(auth);
+		long authUserId = userServ.getUserId(auth);
 		boolean safeToDelete = false;
-		if(projDao.projectHasMembers(projectId) > 0) { //check if project has members
-			if(projDao.deleteProjectMembersOfaProject(projectId, authUserId) > 0) 
-				safeToDelete = true;	
-			}
-		else {
+		if (projDao.projectHasMembers(projectId) > 0) { // check if project has members
+			if (projDao.deleteProjectMembersOfaProject(projectId, authUserId) > 0)
+				safeToDelete = true;
+		} else {
 			safeToDelete = true;
 		}
-		
-		if(safeToDelete) {
+
+		if (safeToDelete) {
 			projTaskDao.deleteAllTasksByProject(projectId, authUserId);
-			return (projDao.deleteProject(projectId, authUserId) > 0)? 1:0;
+			return (projDao.deleteProject(projectId, authUserId) > 0) ? 1 : 0;
 		}
-						
+
 		return 0;
-		
+
 	}
-	
-	
+
 	@GetMapping("/add-project-task")
 	@ResponseBody
-	public int addProjectTask(@RequestParam("title") String title, @RequestParam("desc") String description, 
+	public int addProjectTask(@RequestParam("title") String title, @RequestParam("desc") String description,
 			@RequestParam("project") long projId, @RequestParam String status, Authentication auth) {
-					
-		if(title != "" && projId > 0 && projId > 0) {
+		
+		if (title != "" && projId > 0 && projId > 0) {
 			ProjectTasks task = new ProjectTasks();
 			Optional<Project> project = projDao.findById(projId);
-			project.ifPresent(value -> task.setContainerProject(value));
+			project.ifPresent(value -> task.setContainerProject(value));			
+			if(status.equals("not started"))  //if task status !=
+				task.setAssignee(-1); //not assign to user
+			else
+				task.setAssignee(userServ.getUserId(auth));//assign task to current user
 			/* project.orElse(defaultApplicationType); */
 			task.setTaskName(title);
 			task.setTaskDescription(description);
 			task.setStatus(status);
-			projTaskDao.save(task);
-			return 1;			
+			if(projTaskDao.save(task) != null) 
+				// update project status
+				projServ.updateProjectStatus(projId, auth);
+			
+			return 1;
 		}
-		return 0;		
+		return 0;
 	}
-	
+
 	@GetMapping("/getProjects")
 	public @ResponseBody List<ProjectDto> serveProjects(Authentication auth, Principal p) {
-		//get user id from user account service
+		// get user id from user account service
 		long authUserId = userServ.getUserId(auth);
-		//get projects for specific user			
+		// get projects for specific user
 		return projDao.findProjectListByUserIncUsername(authUserId);
-		//return null;
+		// return null;
 	}
 	
-	
+	//updated project status
+	@GetMapping("/status/{project}")
+	public @ResponseBody String getProjectStatus(@PathVariable("project") long projectId) {
+		return projDao.getStatusOfProject(projectId);
+	}
 
 	@GetMapping("/getProjectTasks")
-	public @ResponseBody List<ProjectTasksDto> serveProjectTaskById(Authentication auth, @RequestParam("project") long projectId) {
-		//get user id from user account service
+	public @ResponseBody List<ProjectTasksDto> serveProjectTaskById(Authentication auth,
+			@RequestParam("project") long projectId) {
+		// get user id from user account service
 		long userId = userServ.getUserId(auth);
-		//get project tasks for specific user			
+		// get project tasks for specific user
 		return projDao.findProjectTasksByProject(projectId, userId);
-		//return null;
+		// return null;
 	}
-	
 
-	
-	//Project count
+	// Project count
 	@GetMapping("/getProjectCount")
 	public @ResponseBody long serveProjectCount(Authentication auth) {
-		//get user id from user account service
+		// get user id from user account service
 		long userId = userServ.getUserId(auth);
-		//get projects for specific user			
+		// get projects for specific user
 		return projDao.countProjectForUser(userId);
 	}
-	
+
 	@GetMapping("/getOwnProjectsCount")
 	public @ResponseBody long serveOwnProjectCount(Authentication auth) {
-		//get user id from user account service
+		// get user id from user account service
 		long userId = userServ.getUserId(auth);
-		//get projects for specific user			
+		// get projects for specific user
 		return projDao.countProjectsCreatedByUser(userId);
 	}
-	
+
 	@GetMapping("/getJoinedProjectsCount")
 	public @ResponseBody long serveJoinedProjectCount(Authentication auth) {
-		//get user id from user account service
+		// get user id from user account service
 		long userId = userServ.getUserId(auth);
-		//get joined projects for specific user			
+		// get joined projects for specific user
 		return projDao.countJoinedProjects(userId);
 	}
-	//Project count ended
-	
-	//project label count
+	// Project count ended
+
+	// project label count
 	@GetMapping("/status/count")
-	public @ResponseBody List<ProjectStatusCount> serveProjectStatusCount(Authentication auth){
+	public @ResponseBody List<ProjectStatusCount> serveProjectStatusCount(Authentication auth) {
 		long userId = userServ.getUserId(auth);
 		return projDao.countAllProjectStatus(userId);
 	}
-	
+
 	@GetMapping("/findByUsername")
 	public @ResponseBody Users findByUsername(@RequestParam("user") String username) {
 		return userRepo.findByUsername(username);
 	}
-	
-	
-	//get project members
+
+	// get project members
 	@GetMapping("/members")
-	public @ResponseBody List<ProjectMembersDto> serveProjectMembersById(Authentication auth, @RequestParam("project") long projectId) {
-		//get user id from user account service
+	public @ResponseBody List<ProjectMembersDto> serveProjectMembersById(Authentication auth,
+			@RequestParam("project") long projectId) {
+		// get user id from user account service
 		long userId = userServ.getUserId(auth);
-		//get project member for specific project			
+		// get project member for specific project
 		return projDao.findProjectMembersByProjectId(projectId, userId);
-		//return null;
+		// return null;
 	}
-	
-	//add project member
-	//returns 1 if successful or 0 if not
+
+	// add project member
+	// returns 1 if successful or 0 if not
 	@GetMapping("/addProjectMember")
-	public @ResponseBody int addProjectMember(@RequestParam("project") long projectId, 
+	public @ResponseBody int addProjectMember(@RequestParam("project") long projectId,
 			@RequestParam("user") String username, Authentication auth) {
-		if(userRepo.findByUsername(username) != null) {
-		long userId = userRepo.findByUsername(username).getUserId();
-		long authUserId = userServ.getUserId(auth);
-		return projDao.addProjectMember(projectId, userId, authUserId);	
+		if (userRepo.findByUsername(username) != null) {
+			long userId = userRepo.findByUsername(username).getUserId();
+			long authUserId = userServ.getUserId(auth);
+			return projDao.addProjectMember(projectId, userId, authUserId);
 		}
 		return 0;
-	}	
-	
-	//remove project member
-		//returns 1 if successful or 0 if not
-		@GetMapping("/removeProjectMember")
-		public @ResponseBody int removeProjectMember(@RequestParam("project") long projectId, 
-				@RequestParam("user") String username, Authentication auth) {
-			if(userRepo.findByUsername(username) != null) {
-			long userId = userRepo.findByUsername(username).getUserId();//subject user id
-			long authUserId = userServ.getUserId(auth);//action performer user id
-			return projDao.removeProjectMember(projectId, userId, authUserId);	
-			}
-			return 0;
-		}
-		
-		
+	}
+
+	// remove project member
+	// returns 1 if successful or 0 if not
+	@GetMapping("/removeProjectMember")
+	public @ResponseBody int removeProjectMember(@RequestParam("project") long projectId,
+			@RequestParam("user") String username, Authentication auth) {
+		if (userRepo.findByUsername(username) != null) {
+			long userId = userRepo.findByUsername(username).getUserId();// subject user id
+			long authUserId = userServ.getUserId(auth);// action performer user id
+			return projDao.removeProjectMember(projectId, userId, authUserId);		}
+		return 0;
+	}
+
 	@GetMapping("/task")
-	public @ResponseBody List<ProjectTasksDto> serverProjectTasks(@RequestParam("project") long projectId, Authentication auth) {
+	public @ResponseBody List<ProjectTasksDto> serverProjectTasks(@RequestParam("project") long projectId,
+			Authentication auth) {
 		long userId = userServ.getUserId(auth);
 		return projTaskDao.findProjectTasks(projectId, userId);
 	}
-		
+
 	@GetMapping("/task/update/status")
-	public @ResponseBody int updateProjectTaskStatus(@RequestParam("status") String statusUpdate, 
+	public @ResponseBody int updateProjectTaskStatus(@RequestParam("status") String statusUpdate,
 			@RequestParam("task") long taskId, Authentication auth) {
 		long userId = userServ.getUserId(auth);
-		return projTaskDao.updateProjectStatus(taskId, statusUpdate, userId);
-
+		long projectId = projDao.findProjectIdByProjectTask(taskId);
+		if(projTaskDao.updateProjectTaskStatus(taskId, statusUpdate, userId) == 1)
+			return projServ.updateProjectStatus(projectId, auth); //updating project status to reflect task status change		
+		return 0;		
 	}
-	
+
 	@GetMapping("/task/update/assignee")
-	public @ResponseBody int addProjectTaskAssignee(@RequestParam("user") long assigneeUserId, 
+	public @ResponseBody int addProjectTaskAssignee(@RequestParam("user") long assigneeUserId,
 			@RequestParam("task") long taskId, Authentication auth) {
 		long authUserId = userServ.getUserId(auth);
 		return projTaskDao.updateProjectTaskAssignee(taskId, assigneeUserId, authUserId);
-
 	}
-	
+
 	@GetMapping("/task/delete/{taskId}")
 	public @ResponseBody int deleteTask(@PathVariable long taskId, Authentication auth) {
 		long authUserId = userServ.getUserId(auth);
-		return projTaskDao.deleteTask(taskId, authUserId);
+		long projectId = projDao.findProjectIdByProjectTask(taskId);
+		if(projTaskDao.deleteTask(taskId, authUserId) == 1)
+			return projServ.updateProjectStatus(projectId, auth);
+		return 0;
 	}
 
 }

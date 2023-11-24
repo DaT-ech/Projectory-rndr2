@@ -16,14 +16,14 @@ Vue.createApp({
 		fetchSearchableData(keyword, event){
 			this.noResult = false;
 			if(keyword != ''){
-				searchLoading = true;
-			fetch(searchUrl+keyword)
+				this.searchLoading = true;
+				fetch(searchUrl+keyword)
 				.then(response => response.json())
 				.then(data => {
 					this.fetchedSearchableData = data;
 					if(data.length == 0)
 					this.noResult = true;
-					searchLoading = false;
+					this.searchLoading = false;
 				})
 			}
 			else{

@@ -68,10 +68,9 @@
 					<!--v-on:keyup="fetchSearchableData(this.$data.name = $event.target.value")-->
 
 					<ul class="dropdown-menu" style="z-index: 1002;">
-						<li><span v-if="noResult">no results found</span></li>
-
-						<template v-if="searchLoading" style="top: 20px">
-							<span class="dot-spinner align-center"  th:fragment="dot-spinner-loader"
+						<template v-if="searchLoading" >
+							<span style="top: 20px;height: 50px; width: 50px;">
+								<span class="dot-spinner align-center"  th:fragment="dot-spinner-loader"
 							style="height: inherit; width: inherit;">
 								<div class="dot-spinner__dot"></div>
 								<div class="dot-spinner__dot"></div>
@@ -82,7 +81,14 @@
 								<div class="dot-spinner__dot"></div>
 								<div class="dot-spinner__dot"></div>
 							</span>
+							</span>
+							
 						</template>
+						<li><span v-if="noResult">no results found</span></li>
+
+						<li>
+							
+						</li>
 
 						<li v-for="searchItems in fetchedSearchableData" class="border-bottom border-bottom-secondary">
 

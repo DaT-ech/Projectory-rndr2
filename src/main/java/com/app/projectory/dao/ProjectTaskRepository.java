@@ -38,7 +38,7 @@ public interface ProjectTaskRepository extends CrudRepository<ProjectTasks, Long
 			+ "LEFT JOIN project_tasks pt on pt.task_id = ?1\n"
 			+ "LEFT JOIN project_members pm on pm.project_id = pt.project_id\n"
 			+ "WHERE (p.project_owner_user_id = ?3 AND p.project_id = pt.project_id) OR pm.user_id = ?3)", nativeQuery = true)
-	int updateProjectStatus(long taskId, String newStatus, long userId);
+	int updateProjectTaskStatus(long taskId, String newStatus, long userId);
 	
 	
 	@Modifying
@@ -71,4 +71,33 @@ public interface ProjectTaskRepository extends CrudRepository<ProjectTasks, Long
 			+ "LEFT JOIN project_members pm ON pm.project_id = ptj.project_id\n"
 			+ "WHERE p.project_owner_user_id = ?2 OR pm.user_id = ?2)", nativeQuery = true)
 	int deleteTask(long taskId, long authUserId);
+	
+	//get number of finished tasks
+	@Query(value="SELECT  COUNT(status) as selectedTasks\n"
+			+ "	FROM project_tasks WHERE status = ?1 AND project_id = ?2\n"
+			+ "	UNION ALL\n"
+			+ "	SELECT  COUNT(task_id) as allTasks\n"
+			+ "	FROM project_tasks WHERE project_id = ?2", nativeQuery=true)
+	int[] countProjectTasksByStatus(String statusType, long projectId);
+	
+	//get number of finished tasks
+		@Query(value="SELECT DISTINCT 1\n"
+				+ "FROM project_tasks WHERE status = ?1 "
+				+ "AND project_id = ?2", nativeQuery=true)
+		int[] findOneTaskByStatus(String statusType, long projectId);
+		
+		@Query(value="SELECT DISTINCT 1\n"
+				+ "	FROM project_tasks \n"
+				+ "	WHERE status = ?1\n"
+				+ "	OR status = ?2\n"
+				+ "	AND project_id = ?3", nativeQuery=true)
+		int[] findOneTaskByTwoStatus(String statusType1, String statusType2, long projectId);
+		
+		@Query(value="SELECT DISTINCT 1\n"
+				+ "	FROM project_tasks \n"
+				+ "	WHERE status = 'not started'\n"
+				+ "	OR status = 'in progress'\n"
+				+ "	OR status = 'done'\n"
+				+ "	AND project_id = ?1", nativeQuery=true)
+		int[] findAnyOneTask(long projectId);
 }

@@ -49,9 +49,12 @@
 	font-weight: 900;
 }
 
-.project-owner-another,
-task-owner {
+.project-owner-another{
 	color: rgb(28, 113, 216);
+	font-weight: 900;
+}
+.task-owner {
+	color: rgb(94, 92, 100);
 	font-weight: 900;
 }
 
