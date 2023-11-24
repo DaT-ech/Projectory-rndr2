@@ -1,4 +1,4 @@
-function scrollToSpecificCollection(collectionId){
+/*function scrollToSpecificCollection(collectionId){
 	
 	//document.getElementById(collectionId).scrollIntoView();
 	
@@ -10,20 +10,17 @@ function scrollToSpecificCollection(collectionId){
 	//alert(collectionId);
 	}
 	
-}
+}*/
 
-function editItem(id) {
 
+
+
+/*function editItem(id) {
 	document.getElementById(id).contentEditable;
-
 	// Get the container element by its ID.
 	const listContrainer = document.select(id);
-
 	// Get the span element by its ID.
 	const spanElement = document.querySelector("#" + id + " span");
-	//
-
-
 	//create form
 	const form = document.createElement("form");
 	form.setAttribute("action", "/todo/update-item?itemId=" + id);
@@ -46,12 +43,19 @@ function editItem(id) {
 	spanElement.replaceWith(form);
 	//spanElement.replaceWith(inputElement);
 	//&#10004;
-}
+}*/
+
+
+
+
+
 /*						</script>
 						
 		
 		<script th:fragment = "ready-delete-button-script">*/
-function readyDeleteButton(specificCollectionId) {
+		
+		
+/*function readyDeleteButton(specificCollectionId) {
 	const checkboxes = document.getElementsByClassName("checkbox-for-deletion-"+specificCollectionId);
 	const delBtn = document.getElementById("delete-selected-btn-"+specificCollectionId);
 	const numberOfItems = document.getElementById("number-of-items-badge-"+specificCollectionId);
@@ -90,7 +94,7 @@ function readyDeleteButton(specificCollectionId) {
 			i.style.opacity = "1";
 		}
 	}
-}
+}*/
 
 
 
@@ -130,7 +134,7 @@ function hideNotificationBoard() {
 
 
 //add new collection script
-function addNewCollection() {
+/*function addNewCollection() {
 	const title = document.getElementById("collection-name-input").value;
 	fetch('/todo-list-collection/add-collection?title=' + title)
 		.then(response => response.json())
@@ -144,16 +148,15 @@ function addNewCollection() {
 				msg = "Couldn't Create New Collection. Please try again.";
 				notificationType = "error";
 			}
-			toggleNotification(notificationType, msg);
-			
+			toggleNotification(notificationType, msg);			
 		})
-}
+}*/
 
 
 
 
 //add Todo Item script
-function addTodo(collectionId) {
+/*function addTodo(collectionId) {
 	const title = document.getElementById("col-"+collectionId+"-todo-title-input").value;
 	fetch('/todo/add-item-js?title=' + title + '&collectionId=' + collectionId)
 		.then(response => response.json())
@@ -167,9 +170,9 @@ function addTodo(collectionId) {
 				msg = "Couldn't add todo item. Please try again.";
 				notificationType = "error";
 			}
-			/*alert(msg);*/
+			alert(msg);
 			toggleNotification(notificationType, msg);
 			
 		})
-}
+}*/
 

@@ -191,9 +191,9 @@
 												<span class="fs-10 d-block">{{task.taskDescription}}</span>
 											</span>
 											<span class="border-start border-start-secondary ms-1">
-												<span class="ms-5 task-owner fs-9"
+												<span class="ms-5 task-owner-light  fs-9"
 													v-if="task.assigneeUsername!=null">@{{task.assigneeUsername}}</span>
-												<span class="ms-5 task-owner pe-5"
+												<span class="ms-5 task-owner-light pe-5"
 													v-if="task.assigneeUsername==null">...</span>
 												<span class="fa-solid fa-trash-can btn btn-danger ms-1 fs-10 p-1 me-2"
 													@click="deleteTaskFromProject(task.taskId, task.projectId)"></span>

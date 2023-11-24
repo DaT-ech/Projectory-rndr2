@@ -21,6 +21,12 @@ const getProjectTasks = '/project/task';
 const getProjectTasksUrl = '/project/getProjectTasks';
 const deleteProjectTaskUrl = '/project/task/delete/';
 
+const collectionListUrl = '/user/collection';
+const collectionTasksListUrl = '/user/collection/list';
+const createCollectionUrl = '/user/collection/create';
+const deleteCollectionUrl = '/user/collection/delete/';
+const addListToCollectionUrl = '/user/collection/add/list';
+
 //let projectListCount2 = 0;
 //project - display -modal
 const projectVue = Vue.createApp({
@@ -40,7 +46,11 @@ const projectVue = Vue.createApp({
 			deletingProject: false,
 
 			projectTasksOnBoardPeekView: [],
-			projectOnBoardCount: 0
+			projectOnBoardCount: 0,
+
+			userCollections: [],
+			creatingCollection: false,
+			addingItemToCollection: false,
 
 
 		}
@@ -50,7 +60,8 @@ const projectVue = Vue.createApp({
 			this.getProjects(),
 			this.getProjectCount(),
 			this.getCurrentUserDetail(),
-			this.getTasksListOnAgileBoard()
+			this.getTasksListOnAgileBoard(),
+			this.getUserCollection()
 
 		//this.getProjectTasks();
 
@@ -85,9 +96,9 @@ const projectVue = Vue.createApp({
 					this.projects = data
 					//notift dashboard project card to update
 					window.localStorage.setItem("projectHasBeenUpdated", true);  //why?
-					
+
 					this.projects.forEach(project => {
-						 this.projectStatus[project.projectId] = project.status;
+						this.projectStatus[project.projectId] = project.status;
 						this.getProjectMembers(project.projectId, true)
 
 						fetch(getProjectTasks + "?project=" + project.projectId)
@@ -101,17 +112,17 @@ const projectVue = Vue.createApp({
 				})
 
 		},
-		
-		updateProjectStatus(projectId){
-			fetch(updatedProjectStatusUrl+projectId)
+
+		updateProjectStatus(projectId) {
+			fetch(updatedProjectStatusUrl + projectId)
 				.then(response => response.text())
-				.then(data=>{
+				.then(data => {
 					this.projectStatus[projectId] = data;
 					//if(data == "Completed")
-						//toggleNotification("success", "Project completed!");
-						//trigger celebration confetti
+					//toggleNotification("success", "Project completed!");
+					//trigger celebration confetti
 				})
-			
+
 		}
 		,
 		updateProjectTasks(projectId) {
@@ -410,7 +421,166 @@ const projectVue = Vue.createApp({
 					this.projectOnBoardCount = data.length;
 					//window.localStorage.setItem("agile-board-selected-project", projectId);
 				})
-		}
+		},
+
+
+		//collection
+		getUserCollection() {
+			fetch(collectionListUrl)
+				.then(response => response.json())
+				.then(data => {
+					this.userCollections = data
+					//this.getUserCollectionTaskList();
+				});
+		},
+		scrollToSpecificCollection(collectionId) {
+			//document.getElementById(collectionId).scrollIntoView();
+			window.setTimeout(test, 300);
+			function test() {
+				const collection = document.getElementById(collectionId);
+				collection.scrollIntoView();
+				//alert(collectionId);
+			}
+
+		},
+		readyDeleteButton(specificCollectionId) {
+			const checkboxes = document.getElementsByClassName("checkbox-for-deletion-" + specificCollectionId);
+			const delBtn = document.getElementById("delete-selected-btn-" + specificCollectionId);
+			const numberOfItems = document.getElementById("number-of-items-badge-" + specificCollectionId);
+			const deleteSingleItemBtns = document.getElementsByClassName("delete-single-item-btn-" + specificCollectionId);
+			const deleteSingleItemLnk = document.getElementsByClassName("delete-single-item-link-" + specificCollectionId);
+			let num = 0;
+			for (var checkbox of checkboxes) {
+				if (checkbox.checked === true) {
+					num++;
+				}
+			}
+			numberOfItems.innerHTML = num;
+			if (num > 0) {
+				delBtn.removeAttribute("disabled");
+
+				for (let l of deleteSingleItemLnk) {
+					l.style.pointerEvents = "none";
+				}
+
+				for (let i of deleteSingleItemBtns) {
+					i.style.backgroundColor = "grey";
+					i.style.opacity = "0.1";
+					//i.setAttribute("class", "badge delete-single-item-btn");
+					i.classList.remove("text-bg-danger");
+				}
+			}
+			else {
+				delBtn.setAttribute("disabled", true);
+				for (let l of deleteSingleItemLnk) {
+					//l.style="pointer-events: none !important";
+					l.style.pointerEvents = "auto";
+				}
+				for (let i of deleteSingleItemBtns) {
+					//i.setAttribute("class", "badge text-bg-danger delete-single-item-btn");
+					i.classList.add("text-bg-danger");
+					i.style.opacity = "1";
+				}
+			}
+		},
+		editItem(id) {
+			document.getElementById(id).contentEditable;
+			// Get the container element by its ID.
+			const listContrainer = document.select(id);
+			// Get the span element by its ID.
+			const spanElement = document.querySelector("#" + id + " span");
+			//create form
+			const form = document.createElement("form");
+			form.setAttribute("action", "/todo/update-item?itemId=" + id);
+			form.setAttribute("method", "POST");
+			form.style.display = "inline";
+
+			// Create a new text input element.
+			const inputElement = document.createElement('input');
+			inputElement.setAttribute("type", "text");
+			inputElement.setAttribute("name", "name");
+
+			// Set th value of the text input element to the text of the span element.
+			inputElement.value = spanElement.textContent;
+			inputElement.className = "form-control edit-element-title-input"
+
+			//add input element to the form
+			form.appendChild(inputElement);
+
+			// Replace the span element with the form element.
+			spanElement.replaceWith(form);
+			//spanElement.replaceWith(inputElement);
+			//&#10004;
+		},
+		//add new collection script
+		addNewCollection() {
+			const title = document.getElementById("collection-name-input").value;
+			if (title == '') {
+				toggleNotification("error", "collection name can't be empty")
+			}
+			else {
+				this.creatingCollection = true;
+				fetch(createCollectionUrl + '?title=' + title)
+					.then(response => response.json())
+					.then(data => {
+						let msg, notificationType;
+						if (data == 1) {
+							this.getUserCollection();
+							msg = "New Collection Created!";
+							notificationType = "success";
+							document.getElementById("collection-name-input").value = '';
+							this.creatingCollection = false;
+						}
+						else {
+							msg = "Couldn't Create New Collection. Please try again.";
+							notificationType = "error";
+						}
+						toggleNotification(notificationType, msg);
+
+					})
+			}
+		},
+		deleteCollection(collectionId){
+			fetch(deleteCollectionUrl+collectionId)
+				.then(resp => resp.json())
+				.then(data => {
+					if(data == 1){
+						toggleNotification("success", "Collection has been deleted")
+						this.getUserCollection();
+					}
+					else{
+						toggleNotification("error", "Unable to delete collection")
+					}
+				})
+		},
+		//add todo item
+		addTodo(collectionId) {
+	const title = document.getElementById("col-"+collectionId+"-todo-title-input").value;
+	if(title == ''){
+		toggleNotification("error", "Item title can't be empty");
+	}else{
+		this.addingItemToCollection = collectionId;
+		fetch(addListToCollectionUrl+'?title=' + title + '&collectionId=' + collectionId)
+		.then(response => response.json())
+		.then(data => {
+			let msg, notificationType;
+			if (data == 1) {
+				this.getUserCollection();
+				msg = "Todo task Item Added!";
+				notificationType = "success";
+				document.getElementById("col-"+collectionId+"-todo-title-input").value = '';
+				this.addingItemToCollection = false;
+			}
+			else {
+				msg = "Couldn't add item. Please try again.";
+				notificationType = "error";
+			}
+			toggleNotification(notificationType, msg);
+			
+		})
+	}
+}
+
 
 	}
 
