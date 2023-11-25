@@ -45,6 +45,13 @@ const userDetail = Vue.createApp({
 			connectionStatus:'',
 			connectionSenderReceiverId:{},
 			suggestedConnections: [],
+			sendingConnectionRequest: false,
+			cancelingConnectionRequest: false,
+			acceptingConnectionRequest: false,
+			rejectingConnectionRequest: false,
+			unfriendingConnection: false,
+			unfriendingConnectionWithConnId: false,
+			
 
 		}
 	},
@@ -107,6 +114,7 @@ const userDetail = Vue.createApp({
 				})
 		},
 		getUserConnections(profileUsername) {
+			this.connectionStatus = "unknown"; //to keep Connect btn from showing up while loading(remove default)
 			let userDetailurl = null;
 			userConnection = userConnectionsUrl + "/" + profileUsername
 
@@ -130,6 +138,7 @@ const userDetail = Vue.createApp({
 				
 		},
 		connectWithUser(receiverUserId) {
+			this.sendingConnectionRequest = true;
 			fetch(sendConnectionRequestUrl+receiverUserId)
 				.then(response => response.json())
 				.then(data => {
@@ -137,10 +146,12 @@ const userDetail = Vue.createApp({
 						toggleNotification("success", "connection request sent!")
 						this.getConnectionStatus(receiverUserId)
 						this.getConnectionSenderReceiverId(receiverUserId)
+						
 					}
 					else{
 						toggleNotification("error", "unable to send connection request");
-					}
+					}					
+					this.sendingConnectionRequest = false;
 				})
 		},
 		cancelConnectionRequest(receiverUserId, event) {
@@ -150,6 +161,7 @@ const userDetail = Vue.createApp({
 			if(isNaN(receiverUserId)){
 				url = "/user/connection/request/remove-username/"
 			}
+			this.cancelingConnectionRequest = true;
 			fetch(url+receiverUserId)
 				.then(response => response.json())
 				.then(data => {
@@ -163,12 +175,14 @@ const userDetail = Vue.createApp({
 					else{
 						toggleNotification("error", "unable to cancel connection request");
 					}
+					this.cancelingConnectionRequest = false;
 				})
 		},
 		
 		rejectConnectionRequest(connectionId, event) {
 			if(event)
 			event.preventDefault();
+			this.rejectingConnectionRequest = true;
 			fetch(rejectConnectionRequestUrl+connectionId)
 				.then(response => response.json())
 				.then(data => {
@@ -180,11 +194,13 @@ const userDetail = Vue.createApp({
 					else{
 						toggleNotification("error", "unable to reject connection request");
 					}
+					this.rejectingConnectionRequest = false;
 				})
 		},
 		acceptConnectionRequest(connectionId, event) {
 			if(event)
 			event.preventDefault();
+			this.acceptingConnectionRequest = true;
 			fetch(acceptConnectionRequestUrl+connectionId)
 				.then(response => response.json())
 				.then(data => {
@@ -197,12 +213,14 @@ const userDetail = Vue.createApp({
 					}
 					else{
 						toggleNotification("error", "unable to accept connection request");
-					}
+					}					
+					this.acceptingConnectionRequest = false;
 				})
 		},
 		unfriendUser(unfriendeeUserId, event) {
 			if(event)
 			event.preventDefault();
+			this.unfriendingConnection = true;
 			fetch(unfriendUserUrl+unfriendeeUserId)
 				.then(response => response.json())
 				.then(data => {
@@ -214,11 +232,13 @@ const userDetail = Vue.createApp({
 					else{
 						toggleNotification("error", "unable to unfriend user");
 					}
+					this.unfriendingConnection = false;
 				})
 		},
 		unfriendUserConnId(unfriendUserConnId, event) {  //duplicate for now..
 			if(event)
 			event.preventDefault();
+			this.unfriendingConnectionWithConnId = true;
 			fetch(unfriendUserByConnIdUrl+unfriendUserConnId)
 				.then(response => response.json())
 				.then(data => {
@@ -230,6 +250,7 @@ const userDetail = Vue.createApp({
 					else{
 						toggleNotification("error", "unable to unfriend user");
 					}
+					this.unfriendingConnectionWithConnId = false;
 				})
 		},
 		getConnectionStatus(userId){

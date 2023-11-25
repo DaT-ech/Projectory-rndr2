@@ -23,7 +23,15 @@
 			<template v-if="connectionStatus == ''">
 				<button class="align-self-start minimalist-btn minimalist-btn-theme-controlled"
 					@click="connectWithUser(authUserId)">
-					<span class="fa-solid fa-plus"></span><span> Connect</span>
+					<span class="d-flex">
+					<template v-if="sendingConnectionRequest">
+						<span style="width: 10px;height: 10px;"> <span
+								th:replace="user/user-layouts::dot-spinner-loader"></span>
+						</span>
+					</template>
+
+					<span class="fa-solid fa-plus align-self-center pe-1"></span><span> Connect</span>
+					</span>
 				</button>
 			</template>
 
@@ -33,11 +41,19 @@
 				&& authUserId == connectionSenderReceiverId.requestReceiver">
 					<button class="align-self-start minimalist-btn minimalist-btn-theme-controlled"
 						@click="cancelConnectionRequest(authUserId, $event)">
-						<span class="fa-solid fa-times pe-1"></span>
+					<span class="d-flex">
+						<template v-if="cancelingConnectionRequest">
+							<span style="width: 10px;height: 10px;"> <span
+									th:replace="user/user-layouts::dot-spinner-loader"></span>
+							</span>
+						</template>
+
+						<span class="fa-solid fa-times pe-1 align-self-center"></span>
 						<!--<span v-if="isOwnAccount == 'true'">Reject Request</span>						
 					<span v-if="isOwnAccount != 'true'">Cancel Request</span>-->
 
 						<span>Cancel Request</span>
+						</span>
 					</button>
 				</template>
 
@@ -45,8 +61,17 @@
 					<button class=" minimalist-btn minimalist-btn-theme-controlled-lighter float-end"
 						@click="rejectConnectionRequest(connectionSenderReceiverId.connectionId, $event)"
 						style="right:0;margin-left:auto">
+						<span class="d-flex">
+
+						<template v-if="rejectingConnectionRequest">
+							<span style="width: 10px;height: 10px;"> <span
+									th:replace="user/user-layouts::dot-spinner-loader"></span>
+							</span>
+						</template>
+
 						<span>
 							<span><span class="fa-solid fa-times"></span> Reject request</span>
+						</span>
 						</span>
 					</button>
 
@@ -65,14 +90,26 @@
 				<!--<span class="ti-check"> <span>request sent.</span> </span>-->
 				<button class="align-self-start minimalist-btn minimalist-btn-theme-controlled"
 					@click="unfriendUserConnId(connectionSenderReceiverId.connectionId)">
-					<span class="fa-solid fa-times"></span><span> Unfriend</span>
+					<span class="d-flex">
+
+					<template v-if="unfriendingConnection">
+						<span style="width: 10px;height: 10px;"> <span
+								th:replace="user/user-layouts::dot-spinner-loader"></span>
+						</span>
+					</template>
+
+					<span class="fa-solid fa-times align-self-center pe-1"></span><span> Unfriend</span>
+					
+					</span>
 				</button>
 			</span>
 
 
 
 			<button class="align-self-start minimalist-btn minimalist-btn-theme-controlled">
-				<span class="fa-solid fa-message"></span><span> Message</span>
+				<span class="d-flex">
+				<span class="fa-solid fa-message align-self-center pe-1"></span><span> Message</span>
+				</span>
 			</button>
 		</span>
 	</div>
@@ -197,7 +234,17 @@
 				<!--<span class="ti-check"> <span>request sent.</span> </span>-->
 				<button class="align-self-start minimalist-btn minimalist-btn-theme-controlled"
 					@click="unfriendUserConnId(connect.connectionId, $event)">
-					<span class="fa-solid fa-times pe-1"></span><span>Unfriend</span>
+					
+					<span class="d-flex">
+
+					<template v-if="unfriendingConnectionWithConnId">
+						<span style="width: 10px;height: 10px;"> <span
+								th:replace="user/user-layouts::dot-spinner-loader"></span>
+						</span>
+					</template>
+
+					<span class="fa-solid fa-times align-self-center pe-1"></span><span class="align-self-center">Unfriend</span>
+					</span>
 				</button>
 			</span>
 
@@ -234,8 +281,17 @@
 			<button class=" minimalist-btn minimalist-btn-theme-controlled float-end"
 				@click="acceptConnectionRequest(receivedReq.connectionId, $event); event.preventDefault()"
 				style="right:0;margin-left:auto">
+				<span class="d-flex">
+
+				<template v-if="acceptingConnectionRequest">
+					<span style="width: 10px;height: 10px;"> <span
+							th:replace="user/user-layouts::dot-spinner-loader"></span>
+					</span>
+				</template>
+
 				<span v-if="isOwnAccount == 'true'">
 					<span><span class="fa-solid fa-check"></span> Accept request</span>
+				</span>
 				</span>
 			</button>
 
@@ -265,7 +321,7 @@
 				<button class=" minimalist-btn minimalist-btn-theme-controlled float-end"
 					@click="cancelConnectionRequest(sentRequest.connectedUserUsername, $event)"
 					style="right:0;margin-left:auto">
-					<span v-if="isOwnAccount == 'true'"><span class="fa-solid fa-check"></span>
+					<span v-if="isOwnAccount == 'true'"><span class="fa-solid fa-times"></span>
 						Cancel request</span>
 				</button>
 			</template>
@@ -276,10 +332,9 @@
 
 <div th:fragment="suggested-connections">
 	<h4>You may also know</h4>
-	<a v-for="suggested in suggestedConnections" :href="`/user/${suggested.username}`"
-	class="no-text-decoration mb-2">
+	<a v-for="suggested in suggestedConnections" :href="`/user/${suggested.username}`" class="no-text-decoration mb-2">
 		<div class="user-project-list-items mb-1 p-1 m-2">
-			<h6>{{suggested.firstName}} {{suggested.lastName}} • @{{suggested.username}}</h6>			
+			<h6>{{suggested.firstName}} {{suggested.lastName}} • @{{suggested.username}}</h6>
 		</div>
 	</a>
 </div>
