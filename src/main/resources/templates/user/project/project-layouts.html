@@ -299,12 +299,13 @@
 
 
 	<div class="col-md-12 mb-2">
-		<button @click="addProject()" class="btn btn-primary-golden btn-sm mt-3">
+		<button @click="addProject()" class="minimalist-btn minimalist-btn-lighter minimalist-btn-lighter2 btn-sm mt-3">
 			<template v-if="creatingProject">
 				<span style="width:30px;height:30px">
 					<span th:replace="user/user-layouts :: dot-spinner-loader"></span>
 				</span>
-			</template> Create Project
+			</template> 
+			<span v-if="!creatingProject">Create Project</span>
 		</button></button>
 	</div>
 </div>

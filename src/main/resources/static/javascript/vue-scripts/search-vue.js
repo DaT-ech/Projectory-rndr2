@@ -22,7 +22,7 @@ Vue.createApp({
 				.then(data => {
 					this.fetchedSearchableData = data;
 					if(data.length == 0)
-					this.noResult = true;
+						this.noResult = true;
 					this.searchLoading = false;
 				})
 			}

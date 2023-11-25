@@ -25,7 +25,7 @@
 					@click="connectWithUser(authUserId)">
 					<span class="d-flex">
 					<template v-if="sendingConnectionRequest">
-						<span style="width: 10px;height: 10px;"> <span
+						<span style="width: 10px;height: 10px;" class="align-self-center"> <span
 								th:replace="user/user-layouts::dot-spinner-loader"></span>
 						</span>
 					</template>
@@ -43,7 +43,7 @@
 						@click="cancelConnectionRequest(authUserId, $event)">
 					<span class="d-flex">
 						<template v-if="cancelingConnectionRequest">
-							<span style="width: 10px;height: 10px;"> <span
+							<span style="width: 10px;height: 10px;" class="align-self-center"> <span
 									th:replace="user/user-layouts::dot-spinner-loader"></span>
 							</span>
 						</template>
@@ -64,7 +64,7 @@
 						<span class="d-flex">
 
 						<template v-if="rejectingConnectionRequest">
-							<span style="width: 10px;height: 10px;"> <span
+							<span style="width: 10px;height: 10px;" class="align-self-center"> <span
 									th:replace="user/user-layouts::dot-spinner-loader"></span>
 							</span>
 						</template>
@@ -93,7 +93,7 @@
 					<span class="d-flex">
 
 					<template v-if="unfriendingConnection">
-						<span style="width: 10px;height: 10px;"> <span
+						<span style="width: 10px;height: 10px;" class="align-self-center"> <span
 								th:replace="user/user-layouts::dot-spinner-loader"></span>
 						</span>
 					</template>
@@ -238,7 +238,7 @@
 					<span class="d-flex">
 
 					<template v-if="unfriendingConnectionWithConnId">
-						<span style="width: 10px;height: 10px;"> <span
+						<span style="width: 10px;height: 10px;" class="align-self-center"> <span
 								th:replace="user/user-layouts::dot-spinner-loader"></span>
 						</span>
 					</template>
@@ -284,7 +284,7 @@
 				<span class="d-flex">
 
 				<template v-if="acceptingConnectionRequest">
-					<span style="width: 10px;height: 10px;"> <span
+					<span style="width: 10px;height: 10px;" class="align-self-center"> <span
 							th:replace="user/user-layouts::dot-spinner-loader"></span>
 					</span>
 				</template>

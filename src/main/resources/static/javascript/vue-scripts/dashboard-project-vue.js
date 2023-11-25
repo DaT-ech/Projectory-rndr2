@@ -205,13 +205,12 @@ const projectVue = Vue.createApp({
 				.then(data => {
 					if (data == 1) {
 						toggleNotification("success", "Project successfully deleted!")
-						this.deletingProject = false;
 						this.getProjects();
 						this.getProjectCount();
 					}
 					else
 						toggleNotification("error", "Unable to delete project!")
-
+					this.deletingProject = false;
 				})
 		},
 		showAddProjectMembersList(id, ev, on) {
@@ -319,14 +318,14 @@ const projectVue = Vue.createApp({
 							toggleNotification("success", "Task has been added to project.")
 							document.querySelector("#" + currentTaskForm + " #task-title").value = "";
 							document.querySelector("#" + currentTaskForm + " #task-description").value = "";
-							taskStatus = document.querySelector("#" + currentTaskForm + " #task-status").value = "not started";
-							this.addingProjectTask = false;
+							taskStatus = document.querySelector("#" + currentTaskForm + " #task-status").value = "not started";							
 							//this.getProjects();
 							this.updateProjectTasks(projectId);
 
 						}
 						else
 							toggleNotification("error", "Unable to add task to project.")
+						this.addingProjectTask = false;
 					})
 			}
 
@@ -465,12 +464,12 @@ const projectVue = Vue.createApp({
 							msg = "New Collection Created!";
 							notificationType = "success";
 							document.getElementById("collection-name-input").value = '';
-							this.creatingCollection = false;
 						}
 						else {
 							msg = "Couldn't Create New Collection. Please try again.";
 							notificationType = "error";
-						}
+						}						
+						this.creatingCollection = false;
 						toggleNotification(notificationType, msg);
 
 					})
@@ -484,10 +483,10 @@ const projectVue = Vue.createApp({
 					if (data == 1) {
 						toggleNotification("success", "Collection has been deleted")
 						this.getUserCollection();
-						this.deletingCollection = false;
 					}
 					else {
 						toggleNotification("error", "Unable to delete collection")
+					this.deletingCollection = false;
 					}
 				})
 		},
@@ -498,7 +497,7 @@ const projectVue = Vue.createApp({
 				toggleNotification("error", "Item title can't be empty");
 			} else {
 				this.readyDeleteButton(collectionId, true)
-				this.addingItemToCollection = collectionId;
+				this.addingItemToCollection = collectionId; //not set to true to avoid triggering other similar buttons
 				fetch(addListToCollectionUrl + '?title=' + title + '&collectionId=' + collectionId)
 					.then(response => response.json())
 					.then(data => {
@@ -508,7 +507,6 @@ const projectVue = Vue.createApp({
 							msg = "Todo task Item Added!";
 							notificationType = "success";
 							document.getElementById("col-" + collectionId + "-todo-title-input").value = '';
-							this.addingItemToCollection = false;
 							this.readyDeleteButton(collectionId)
 						}
 						else {
@@ -516,6 +514,7 @@ const projectVue = Vue.createApp({
 							notificationType = "error";
 						}
 						toggleNotification(notificationType, msg);
+						this.addingItemToCollection = false;
 
 					})
 			}
