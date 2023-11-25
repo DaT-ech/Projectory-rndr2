@@ -26,6 +26,10 @@ const collectionTasksListUrl = '/user/collection/list';
 const createCollectionUrl = '/user/collection/create';
 const deleteCollectionUrl = '/user/collection/delete/';
 const addListToCollectionUrl = '/user/collection/add/list';
+const deleteSingleTodoItemUrl = '/user/collection/delete/list/item?itemId='
+const markTodoItemAsDoneUrl = '/user/collection/mark/done/'
+const markTodoItemAsOngoingUrl = '/user/collection/mark/ongoing/'
+const deleteSelectedItemsUrl = '/user/collection/delete/list/item/selected/'
 
 //let projectListCount2 = 0;
 //project - display -modal
@@ -51,7 +55,8 @@ const projectVue = Vue.createApp({
 			userCollections: [],
 			creatingCollection: false,
 			addingItemToCollection: false,
-
+			deletingCollection: false,
+			selectedItemsForDeletionCount: 0,
 
 		}
 	},
@@ -443,45 +448,206 @@ const projectVue = Vue.createApp({
 			}
 
 		},
-		readyDeleteButton(specificCollectionId) {
+		//add new collection script
+		addNewCollection() {
+			const title = document.getElementById("collection-name-input").value;
+			if (title == '') {
+				toggleNotification("error", "collection name can't be empty")
+			}
+			else {
+				this.creatingCollection = true;
+				fetch(createCollectionUrl + '?title=' + title)
+					.then(response => response.json())
+					.then(data => {
+						let msg, notificationType;
+						if (data == 1) {
+							this.getUserCollection();
+							msg = "New Collection Created!";
+							notificationType = "success";
+							document.getElementById("collection-name-input").value = '';
+							this.creatingCollection = false;
+						}
+						else {
+							msg = "Couldn't Create New Collection. Please try again.";
+							notificationType = "error";
+						}
+						toggleNotification(notificationType, msg);
+
+					})
+			}
+		},
+		deleteCollection(collectionId) {
+			this.deletingCollection = collectionId;
+			fetch(deleteCollectionUrl + collectionId)
+				.then(resp => resp.json())
+				.then(data => {
+					if (data == 1) {
+						toggleNotification("success", "Collection has been deleted")
+						this.getUserCollection();
+						this.deletingCollection = false;
+					}
+					else {
+						toggleNotification("error", "Unable to delete collection")
+					}
+				})
+		},
+		//add todo item
+		addTodo(collectionId) {
+			const title = document.getElementById("col-" + collectionId + "-todo-title-input").value;
+			if (title == '') {
+				toggleNotification("error", "Item title can't be empty");
+			} else {
+				this.readyDeleteButton(collectionId, true)
+				this.addingItemToCollection = collectionId;
+				fetch(addListToCollectionUrl + '?title=' + title + '&collectionId=' + collectionId)
+					.then(response => response.json())
+					.then(data => {
+						let msg, notificationType;
+						if (data == 1) {
+							this.getUserCollection();
+							msg = "Todo task Item Added!";
+							notificationType = "success";
+							document.getElementById("col-" + collectionId + "-todo-title-input").value = '';
+							this.addingItemToCollection = false;
+							this.readyDeleteButton(collectionId)
+						}
+						else {
+							msg = "Couldn't add item. Please try again.";
+							notificationType = "error";
+						}
+						toggleNotification(notificationType, msg);
+
+					})
+			}
+		},
+		deleteSingleTodoItem(todoItemId) {
+			fetch(deleteSingleTodoItemUrl + todoItemId)
+				.then(response => response.json())
+				.then(data => {
+					if (data == 1) {
+						this.getUserCollection();
+						toggleNotification("success", "Item deleted");
+					}
+				})
+		},
+		readyDeleteButton(specificCollectionId, clear) {
 			const checkboxes = document.getElementsByClassName("checkbox-for-deletion-" + specificCollectionId);
-			const delBtn = document.getElementById("delete-selected-btn-" + specificCollectionId);
+			const deleteSelectedItemsBtn = document.getElementById("delete-selected-btn-" + specificCollectionId);
 			const numberOfItems = document.getElementById("number-of-items-badge-" + specificCollectionId);
 			const deleteSingleItemBtns = document.getElementsByClassName("delete-single-item-btn-" + specificCollectionId);
 			const deleteSingleItemLnk = document.getElementsByClassName("delete-single-item-link-" + specificCollectionId);
-			let num = 0;
-			for (var checkbox of checkboxes) {
-				if (checkbox.checked === true) {
-					num++;
-				}
-			}
-			numberOfItems.innerHTML = num;
-			if (num > 0) {
-				delBtn.removeAttribute("disabled");
-
-				for (let l of deleteSingleItemLnk) {
-					l.style.pointerEvents = "none";
-				}
-
-				for (let i of deleteSingleItemBtns) {
-					i.style.backgroundColor = "grey";
-					i.style.opacity = "0.1";
-					//i.setAttribute("class", "badge delete-single-item-btn");
-					i.classList.remove("text-bg-danger");
-				}
+			this.selectedItemsForDeletionCount = 0;
+			if (clear) {
+				for (let checkbox of checkboxes){
+					checkbox.checked = false;	
+					}
+					this.selectedItemsForDeletionCount = 0;
+					deleteSelectedItemsBtn.setAttribute("disabled", true);
+					deleteSelectedItemsBtn.classList.remove("btn-danger")
+					for (let l of deleteSingleItemLnk) {
+						//l.style="pointer-events: none !important";
+						l.style.pointerEvents = "auto";
+					}
+					for (let i of deleteSingleItemBtns) {
+						//i.setAttribute("class", "badge text-bg-danger delete-single-item-btn");
+						i.classList.add("text-bg-danger");
+						i.style.opacity = "1";
+					}	
+					numberOfItems.innerHTML = this.selectedItemsForDeletionCount;	
+					
 			}
 			else {
-				delBtn.setAttribute("disabled", true);
-				for (let l of deleteSingleItemLnk) {
-					//l.style="pointer-events: none !important";
-					l.style.pointerEvents = "auto";
+				for (var checkbox of checkboxes) {
+					if (checkbox.checked === true) {
+						this.selectedItemsForDeletionCount++;
+					}
 				}
-				for (let i of deleteSingleItemBtns) {
-					//i.setAttribute("class", "badge text-bg-danger delete-single-item-btn");
-					i.classList.add("text-bg-danger");
-					i.style.opacity = "1";
+				numberOfItems.innerHTML = this.selectedItemsForDeletionCount;
+				if (this.selectedItemsForDeletionCount > 0) {
+					deleteSelectedItemsBtn.removeAttribute("disabled"); //d
+
+					for (let l of deleteSingleItemLnk) { //can be replaced with classList
+						l.style.pointerEvents = "none";
+					}
+
+					for (let i of deleteSingleItemBtns) {
+						i.style.backgroundColor = "grey";
+						i.style.opacity = "0.1";
+						//i.setAttribute("class", "badge delete-single-item-btn");
+						i.classList.remove("text-bg-danger");
+					}
+					deleteSelectedItemsBtn.classList.add("btn-danger")
+				}
+				else {
+					deleteSelectedItemsBtn.setAttribute("disabled", true);
+					deleteSelectedItemsBtn.classList.remove("btn-danger")
+					for (let l of deleteSingleItemLnk) {
+						//l.style="pointer-events: none !important";
+						l.style.pointerEvents = "auto";
+					}
+					for (let i of deleteSingleItemBtns) {
+						//i.setAttribute("class", "badge text-bg-danger delete-single-item-btn");
+						i.classList.add("text-bg-danger");
+						i.style.opacity = "1";
+					}
 				}
 			}
+		},
+		deleteSelectedItems(collectionId,event) {
+			event.preventDefault()
+			let selectedItems = [];
+			let selectedItemsJson = {};
+			let counter = 0;
+			const form = document.getElementById(event.target.id);
+
+			const items = document.querySelectorAll("#" + event.target.id + " .checkbox-for-deletion")
+			for (let item of items) {
+				if (item.checked) {
+					selectedItems.push(Number(item.value));
+					//selectedItemsJson[counter++] = item.value					
+				}
+				//selectedItems = JSON.parse(selectedItems)
+			}
+			//console.log(selectedItems)
+			//console.log(selectedItemsJson)
+			const queryString = selectedItems.map(value => `items=${value}`).join('&');
+
+			//fetch(deleteSelectedItemsUrl+selectedItems)
+			fetch(deleteSelectedItemsUrl + "?" + queryString)
+				.then(resp => resp.json())
+				.then(data => {
+					//console.log(data)
+					if (data == 1) {
+						//this.selectedItemsForDeletionCount = 0;
+						toggleNotification("success", selectedItems.length + " items deleted");
+					this.readyDeleteButton(collectionId, true)
+						this.getUserCollection();
+							//this.readyDeleteButton(collectionId)
+					}
+				})
+
+		},
+		markItemAsDone(todoItemId, event) {
+			let url = markTodoItemAsDoneUrl;
+			let msg = "Item marked as done"
+			let done = true;
+			if (!event.target.checked) {
+				url = markTodoItemAsOngoingUrl;
+				msg = "Item marked as on going"
+				done = false;
+			}
+			fetch(url + todoItemId)
+				.then(response => response.json())
+				.then(data => {
+					if (data == 1) {
+						//this.getUserCollection();
+						if (done)
+							document.getElementById("list-item-" + todoItemId).classList.add("done");
+						else
+							document.getElementById("list-item-" + todoItemId).classList.remove("done");
+						toggleNotification("success", msg);
+					}
+				})
 		},
 		editItem(id) {
 			document.getElementById(id).contentEditable;
@@ -511,75 +677,7 @@ const projectVue = Vue.createApp({
 			spanElement.replaceWith(form);
 			//spanElement.replaceWith(inputElement);
 			//&#10004;
-		},
-		//add new collection script
-		addNewCollection() {
-			const title = document.getElementById("collection-name-input").value;
-			if (title == '') {
-				toggleNotification("error", "collection name can't be empty")
-			}
-			else {
-				this.creatingCollection = true;
-				fetch(createCollectionUrl + '?title=' + title)
-					.then(response => response.json())
-					.then(data => {
-						let msg, notificationType;
-						if (data == 1) {
-							this.getUserCollection();
-							msg = "New Collection Created!";
-							notificationType = "success";
-							document.getElementById("collection-name-input").value = '';
-							this.creatingCollection = false;
-						}
-						else {
-							msg = "Couldn't Create New Collection. Please try again.";
-							notificationType = "error";
-						}
-						toggleNotification(notificationType, msg);
-
-					})
-			}
-		},
-		deleteCollection(collectionId){
-			fetch(deleteCollectionUrl+collectionId)
-				.then(resp => resp.json())
-				.then(data => {
-					if(data == 1){
-						toggleNotification("success", "Collection has been deleted")
-						this.getUserCollection();
-					}
-					else{
-						toggleNotification("error", "Unable to delete collection")
-					}
-				})
-		},
-		//add todo item
-		addTodo(collectionId) {
-	const title = document.getElementById("col-"+collectionId+"-todo-title-input").value;
-	if(title == ''){
-		toggleNotification("error", "Item title can't be empty");
-	}else{
-		this.addingItemToCollection = collectionId;
-		fetch(addListToCollectionUrl+'?title=' + title + '&collectionId=' + collectionId)
-		.then(response => response.json())
-		.then(data => {
-			let msg, notificationType;
-			if (data == 1) {
-				this.getUserCollection();
-				msg = "Todo task Item Added!";
-				notificationType = "success";
-				document.getElementById("col-"+collectionId+"-todo-title-input").value = '';
-				this.addingItemToCollection = false;
-			}
-			else {
-				msg = "Couldn't add item. Please try again.";
-				notificationType = "error";
-			}
-			toggleNotification(notificationType, msg);
-			
-		})
-	}
-}
+		}
 
 
 	}

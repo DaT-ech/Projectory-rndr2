@@ -557,10 +557,35 @@
 	/*background-color: rgba(181, 131, 90, 0.2);*/
 	border-radius: 0.25rem;
 	border-bottom: 1px dotted #4a365e;
+	transition: 0.1s ease-in-out;
 }
+.list-items.done{
+	color: #777171;	
+	background-color:rgba(74, 74, 74, 0.5);
+}
+.list-items.done  * {
+	color: #777171;
+}
+.list-items.done > *, .list-items.done .edit-item-btn{	
+	text-decoration: line-through;	
+	text-decoration-thickness: 2px;
+}
+
+.delete-single-item-btn{
+	
+}
+
+.delete-single-item-link{
+	pointer-events:all;
+}
+.delete-single-item-link.disabled{
+	pointer-events:none;
+}
+
 
 .collection-bottom-btns {
 	background-color: rgb(192, 191, 188);
+	background-color: rgb(36, 33, 43);
 	text-align: center;
 	text-justify: center;
 	width: 100%;

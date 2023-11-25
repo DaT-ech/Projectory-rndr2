@@ -47,24 +47,24 @@ public class TodoController {
 		return "redirect:/todo/add-item-form?item=added";
 	}
 	
-	@GetMapping("add-item-js")
-	@ResponseBody
-	public int addTodoUsingJs(@RequestParam String title, @RequestParam long collectionId) {
-		Todo todo = new Todo();
-		try {
-			
-			Optional<TodoListCollection> collection = collectionDao.findById(collectionId);
-			collection.ifPresent(value -> todo.setCollection(value));
-			
-			todo.setTitle(title);
-			todoData.save(todo);
-		}
-		catch(Exception er) {
-			return -1;
-		}
-		return 1;
-		
-	}
+//	@GetMapping("add-item-js")
+//	@ResponseBody
+//	public int addTodoUsingJs(@RequestParam String title, @RequestParam long collectionId) {
+//		Todo todo = new Todo();
+//		try {
+//			
+//			Optional<TodoListCollection> collection = collectionDao.findById(collectionId);
+//			collection.ifPresent(value -> todo.setCollection(value));
+//			
+//			todo.setTitle(title);
+//			todoData.save(todo);
+//		}
+//		catch(Exception er) {
+//			return -1;
+//		}
+//		return 1;
+//		
+//	}
 	
 	@GetMapping("displayTodoList")
 	public String displayTodoList(Model model) {
@@ -84,12 +84,12 @@ public class TodoController {
 		
 		return "redirect:/todo?item=updated";
 	}
-	@PostMapping("/delete-selected")
-	public String deleteSelectedItems(@RequestParam("selectedForRemoval") Long[] selectedValues) {
-		String result = Arrays.toString(selectedValues);
-		for(int i=0; i < selectedValues.length; i++ ) {
-			todoData.deleteById(selectedValues[i]);
-		}
-		return "redirect:/todo?item=multiple-deleted";
-	}
+//	@PostMapping("/delete-selected")
+//	public String deleteSelectedItems(@RequestParam("selectedForRemoval") Long[] selectedValues) {
+//		String result = Arrays.toString(selectedValues);
+//		for(int i=0; i < selectedValues.length; i++ ) {
+//			todoData.deleteById(selectedValues[i]);
+//		}
+//		return "redirect:/todo?item=multiple-deleted";
+//	}
 }

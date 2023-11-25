@@ -34,13 +34,20 @@
 
 			<div th:replace="user/todo/todoLayouts :: displayItems"></div>
 
-			<div class="collection-bottom-btns">
-				<span role="button" class="minimalist-btn minimalist-btn-lighter btn-sm"><span
-						class="fa-solid fa-pen"></span> Edit
-					Collection</span>
-				<span role="button" class="minimalist-btn minimalist-btn-lighter btn-sm"
-					@click="deleteCollection(collection.todoCollectionId)"><span
-						class="fa-solid fa-calendar-xmark"></span> Delete Collection</span>
+			<div class="collection-bottom-btns d-flex justify-content-center">
+				<span role="button" class="minimalist-btn minimalist-btn-lighter minimalist-btn-lighter2 btn-sm"><span
+						class="fa-solid fa-pen" disabled></span>
+					<span class="align-self-center">Edit Collection</span>
+				</span>
+				<span role="button" class="minimalist-btn minimalist-btn-lighter minimalist-btn-lighter2 btn-sm d-flex align-self-center"
+					@click="deleteCollection(collection.todoCollectionId)">
+					<template v-if="deletingCollection === collection.todoCollectionId">
+						<span style="width: 15px;height: 15px;">
+							<span th:replace="user/user-layouts::dot-spinner-loader"></span>
+						</span>
+					</template>
+					<span class="fa-solid fa-calendar-xmark align-self-center"></span>
+					<span class="align-self-center">Delete Collection</span> </span>
 			</div>
 		</div>
 	</div>
@@ -102,29 +109,35 @@
 <!--display todo list items started-->
 <div th:fragment="displayItems" class="item-display-table p-2">
 	<div class="d-flex">
-		<button class="minimalist-btn minimalist-btn-blk-bg btn-sm mt-3" onClick="addContributersForm()">Add
+		<button class="minimalist-btn minimalist-btn-blk-bg btn-sm mt-3" onClick="addContributersForm()" disabled>Add
 			contributers</button>
 	</div>
 
 	<div th:replace="user/todo/todoLayouts :: add-todo-item-form"></div>
 	<p class="card-text fw-lighter mb-0 item-count item-count-check" th:text="${itemCount}"></p>
-	<form th:action="@{/user/todo/delete-selected}" method="post">
-		<button type="submit" class="btn btn-danger btn-sm mt-3 float-end delete-selected-btn" value="Delete Selected"
+	<form @submit="deleteSelectedItems(collection.todoCollectionId, $event)"  method="post" :id="`form-${collection.todoCollectionId}`">
+		<button type="submit" class="btn btn-sm mt-3 float-end delete-selected-btn" value="Delete Selected"
 			:id="`delete-selected-btn-${collection.todoCollectionId}`" disabled>
+			
 			Delete <span class="badge text-bg-warning number-of-items-badge"
-				:id="`number-of-items-badge-${collection.todoCollectionId}`" disabled>0</span> Items
-		</button>
+				:id="`number-of-items-badge-${collection.todoCollectionId}`">0</span> Items
+		</button> <!-- Delete items -->
 		<br /><br />
 		<div class="d-block todo-list-display-box custom-scrollbar-style-3">
 			<div v-for="item in collection.todoListItems">
 
-				<div class="list-items">
+				<div :class="`list-items ${item.status}`" :id="`list-item-${item.todoItemId}`">
 
 					<span class="float-start delete-item-checkbox item-control-buttons item-control-right-border mt-2">
-						<input type="checkbox" @click="readyDeleteButton()" name="selectedForRemoval"
+						<input v-if="item.status != 'done'"  type="checkbox" @click="markItemAsDone(item.todoItemId, $event)" name="selectedForRemoval"
 							:value="item.todoItemId"
 							class="form-check-input mark-todo-task-done red-checkbox green-checkbox"
 							id="mark-todo-task-done" title="Mark as done">
+							
+							<input v-if="item.status == 'done'" type="checkbox" @click="markItemAsDone(item.todoItemId, $event)" name="selectedForRemoval"
+							:value="item.todoItemId"
+							class="form-check-input mark-todo-task-done red-checkbox green-checkbox"
+							id="mark-todo-task-done" title="Mark as done" checked>
 					</span>
 
 					<div class="d-flex justify-content-between p-2">
@@ -133,24 +146,25 @@
 							<span id="">{{item.title}}</span>
 
 							<span class="badge me-2 edit-item-btn fa-solid fa-edit" title="Edit Item"
-								@click="editItem(this.id)" :id="item.todoItemId"> </span>
+								@click="editItem(this.id)" :id="item.todoItemId"> <span></span> </span>
 
 
 						</div>
 
 						<div class="item-deletion-controls d-flex" style="display: inline;">
-							<a :href="`/todo/delete-item?itemId=${item.todoItemId}}`"
-								:class="`link-white-color float-end delete-single-item-link-${collection.todoCollectionId}`">
+							<span role="button" @click="deleteSingleTodoItem(item.todoItemId)" 
+								:class="`link-white-color float-end delete-single-item-link delete-single-item-link-${collection.todoCollectionId}`">
 								<span
 									:class="`badge text-bg-danger delete-single-item-btn delete-single-item-btn-${collection.todoCollectionId} fa-solid fa-trash-can`"
-									title="Delete Item"> </span>
-							</a>
+									title="Delete Item"> <span class=""></span> </span>
+							</span>
 
 							<span class="delete-item-checkbox item-control-buttons item-control-left-border">
+								<!--<input type="checkbox" @click="readyDeleteButton(collection.todoCollectionId)"-->
 								<input type="checkbox" @click="readyDeleteButton(collection.todoCollectionId)"
 									name="selectedForRemoval" :value="item.todoItemId"
-									:class="`form-check-input checkbox-for-deletion-${collection.todoCollectionId} red-checkbox`"
-									id="checkbox-for-deletion" title="Select item">
+									:class="`form-check-input checkbox-for-deletion checkbox-for-deletion-${collection.todoCollectionId} red-checkbox`"
+									:id="`checkbox-for-deletion-${item.todoItemId}`" title="Select item">
 							</span>
 
 
@@ -181,8 +195,8 @@
 			<input type="text" class="form-control add-todo-collection-input mt-3 col-md-10"
 				placeholder="What should we call your collection" id="collection-name-input" autofocus maxlength="40"
 				style="width: 70%;">
-			<button @click="addNewCollection()" 
-			class="btn btn-primary-golden btn-sm add-todo-collection-btn mt-3 ms-2 d-flex">
+			<button @click="addNewCollection()"
+				class="btn btn-primary-golden btn-sm add-todo-collection-btn mt-3 ms-2 d-flex">
 				<template v-if="creatingCollection">
 					<span style="width: 25px;height: 25px;">
 						<span th:replace="user/user-layouts::dot-spinner-loader"></span>
@@ -202,13 +216,15 @@
 		<span class="subtle-form-input-container d-flex">
 			<input type="text" class="subtle-form-input p-2" placeholder="What would you like to add?"
 				:id="`col-${collection.todoCollectionId}-todo-title-input`" autofocus>
-			<span role="button" @click="addTodo(collection.todoCollectionId)" class="subtle-form-btn d-inline p-2 d-flex">
+			<span role="button" @click="addTodo(collection.todoCollectionId)"
+				class="subtle-form-btn d-inline p-2 d-flex">
 				<template v-if="addingItemToCollection === collection.todoCollectionId">
 					<span style="width: 20px;height: 20px;">
 						<span th:replace="user/user-layouts::dot-spinner-loader"></span>
 					</span>
 				</template>
-				<span v-if="addingItemToCollection !== collection.todoCollectionId || !addingItemToCollection" class="fa-solid fa-circle-plus align-self-center pe-1"></span>
+				<span v-if="addingItemToCollection !== collection.todoCollectionId || !addingItemToCollection"
+					class="fa-solid fa-circle-plus align-self-center pe-1"></span>
 				<span> Add Item</span> </span>
 		</span>
 
