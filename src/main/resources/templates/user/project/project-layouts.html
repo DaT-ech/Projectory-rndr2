@@ -79,7 +79,8 @@
 						<br />
 						<span class="fw-lighter">{{project.description}}</span>
 						<!--<span :class="`d-block project-status-label ${project.status}`">{{project.status}}</span>-->
-						<span :class="`d-block project-status-label ${projectStatus[project.projectId]}`">{{projectStatus[project.projectId]}}</span>
+						<span
+							:class="`d-block project-status-label ${projectStatus[project.projectId]}`">{{projectStatus[project.projectId]}}</span>
 						<br />
 
 
@@ -110,7 +111,7 @@
 							class="add-project-member-list-container custom-scrollbar-style-2 overflow-ver-scroll text-center">
 							<!--loop through connections list-->
 							<span v-if="connectsList.length == 0" class="ti-info-alt p-1 word-wrap fs-10">
-								You have no connections yet.<br/>
+								You have no connections yet.<br />
 								Search &amp; add some connections first.</span>
 
 							<div v-for="conn in connectsList" :key="conn.connectionId"
@@ -157,11 +158,11 @@
 								</div>
 
 
-								<button class="btn btn-primary-golden btn-sm"
+								<button class="minimalist-btn minimalist-btn-lighter minimalist-btn-lighter2 btn-sm"
 									@click="addTaskToProject(project.projectId)">
 									<span class="d-flex justify-content-between">
 										<template v-if="addingProjectTask">
-											<span style="width:30px;height:30px">
+											<span style="width:15px;height:15px">
 												<span th:replace="user/user-layouts :: dot-spinner-loader"></span>
 											</span>
 										</template>
@@ -176,7 +177,14 @@
 
 
 					<div class="project-modal-boxes-inner project-task-modal-view p-1 my-2 mx-2 align-self-start">
-						<h5 class="project-task-title mt-2 ms-2">Tasks</h5>
+						<span class="d-flex justify-content-between">
+							<h5 class="project-task-title mt-2 ms-2">Tasks</h5>
+							<template v-if="refreshingProjectTasks">
+								<span style="width:20px;height:20px" class="align-self-center">
+									<span th:replace="user/user-layouts :: dot-spinner-loader"></span>
+								</span>
+							</template>
+						</span>
 						<!--display Project tasks-->
 						<hr />
 						<div class="modal-project-task-container p-1">
@@ -225,7 +233,7 @@
 										<span th:replace="user/user-layouts :: dot-spinner-loader"></span>
 									</span>
 								</template>
-								<span class="fa-solid fa-trash-can"></span>
+								<span v-if="!deletingProject" class="fa-solid fa-trash-can"></span>
 								<span>Delete Project</span>
 							</span>
 						</span>
@@ -304,7 +312,7 @@
 				<span style="width:30px;height:30px">
 					<span th:replace="user/user-layouts :: dot-spinner-loader"></span>
 				</span>
-			</template> 
+			</template>
 			<span v-if="!creatingProject">Create Project</span>
 		</button></button>
 	</div>

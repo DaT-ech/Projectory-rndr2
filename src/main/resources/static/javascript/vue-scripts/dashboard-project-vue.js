@@ -56,6 +56,7 @@ const projectVue = Vue.createApp({
 			creatingCollection: false,
 			addingItemToCollection: false,
 			deletingCollection: false,
+			refreshingProjectTasks: false,
 			selectedItemsForDeletionCount: 0,
 
 		}
@@ -133,12 +134,13 @@ const projectVue = Vue.createApp({
 		updateProjectTasks(projectId) {
 			this.updateProjectStatus(projectId);
 			this.projects.forEach(project => {
-
+				this.refreshingProjectTasks = true;
 				fetch(getProjectTasks + "?project=" + project.projectId)
 					.then(response => response.json())
 					.then(data => {						//
 						project.projectTasks = data;
 						//this.loadingProjects = false;
+						this.refreshingProjectTasks = false;
 					})
 			})
 		},
@@ -321,17 +323,15 @@ const projectVue = Vue.createApp({
 							taskStatus = document.querySelector("#" + currentTaskForm + " #task-status").value = "not started";							
 							//this.getProjects();
 							this.updateProjectTasks(projectId);
-
 						}
 						else
 							toggleNotification("error", "Unable to add task to project.")
 						this.addingProjectTask = false;
 					})
 			}
-
-
 		},
 		deleteTaskFromProject(taskId, projectId) {
+			this.refreshingProjectTasks = true;
 			fetch(deleteProjectTaskUrl + taskId)
 				.then(response => response.json())
 				.then(data => {
@@ -342,6 +342,7 @@ const projectVue = Vue.createApp({
 					}
 					else
 						toggleNotification("error", "Unable to delete task from project.")
+					this.refreshingProjectTasks = false;
 				})
 
 

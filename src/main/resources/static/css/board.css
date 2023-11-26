@@ -17,8 +17,9 @@
 }
 
 .board-inside-container.full-screen {
-	height: 94%;
+	/*height: 94%;*/
 	overflow-y: scroll;	
+	height: 90vh;
 }
 
 .board-full-screen-btn {
@@ -33,7 +34,7 @@
 
 .board-inside-container {
 	background-color: var(--board-background-color-primary);
-	min-height: 70vh;
+	/*min-height: 70vh;*/
 	padding: 1rem;
 	border: 5px inset var(--board-border-inset-primary);
 }
@@ -46,6 +47,7 @@
 	transition: 0.1s ease-in-out;
 	min-width: 32%;
 	border-bottom: 3px solid var(--board-border-color-primary);
+	height: 82vh;  
 }
 
 .task-stage h4 {
@@ -63,13 +65,14 @@
 	/*height: auto;*/
 	transition: 0.2s ease-in-out;
 	padding: 0.9rem;
+	height: 73vh 
 }
 
 .drop-area-card-body.highlighted {
 	/*border: 1px solid yellow;*/
 	background-color: rgba(0, 0, 0, 0.2);
 	scale: 1.1;
-	height: 80%;
+	/*height: 80%;*/
 }
 
 .task-draggable-card {

@@ -73,7 +73,8 @@ public interface ProjectRepository extends CrudRepository<Project, Long>{
 			+ "p.project_id as projectId FROM project p \n"
 			+ "LEFT JOIN project_members m ON m.user_id = ?1\n"
 			+ "LEFT JOIN Users us on us.user_id = p.project_owner_user_id\n"
-			+ "WHERE p.project_owner_user_id = ?1 OR p.project_id = m.project_id", nativeQuery = true)
+			+ "WHERE p.project_owner_user_id = ?1 OR p.project_id = m.project_id\n"
+			+ "ORDER BY projectId DESC", nativeQuery = true)
 	List<ProjectDto> findProjectListByUserIncUsername(long userId); 
 	
 	
@@ -98,7 +99,8 @@ public interface ProjectRepository extends CrudRepository<Project, Long>{
 			+ "LEFT JOIN project p on p.project_id = ?1 AND p.project_owner_user_id = ?2\n"
 			+ "LEFT JOIN project_members pm on pm.project_id = ?1 AND pm.user_id = ?2\n"
 			+ "LEFT JOIN users us on us.user_id = pt.assignee\n"
-			+ "WHERE pt.project_id = ?1 AND (pm.user_id = ?2 OR p.project_owner_user_id = ?2)", nativeQuery = true)
+			+ "WHERE pt.project_id = ?1 AND (pm.user_id = ?2 OR p.project_owner_user_id = ?2)\n"
+			+ "ORDER BY taskId ASC", nativeQuery = true)
 	List<ProjectTasksDto> findProjectTasksByProject(long projectId, long userId); 
 	
 	

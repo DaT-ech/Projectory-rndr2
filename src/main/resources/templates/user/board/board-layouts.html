@@ -1,12 +1,12 @@
 <div th:fragment="board-container" class="board-container p-2" id="board-container">
 
-	<div class="board-top-controls mb-2 d-flex justify-content-between flex-wrap">
+	<div class="board-top-controls mb-0 d-flex justify-content-between flex-wrap">
 		<button @click="boardOnFullScreen()" id="board-full-screen-btn"
 			class="board-full-screen-btn minimalist-btn minimalist-btn-blk-bg btn-sm align-self-start">Full
 			Screen</button>
 		
 		<span><span class="board-info fa-regular fa-hand">
-		</span><span class="board-info info-tag-dark">You can drag the tasks to your desired stage</span></span>
+		</span><span class="board-info info-tag-dark info-tag-darker">You can drag-and-drop a task to your desired stage</span></span>
 
 		<span class="">
 			<span v-if="showLoader" style="z-index: 5000; position: absolute;">
@@ -37,7 +37,7 @@
 </div>
 
 <div th:fragment="task-stage-categories" class="d-flex justify-content-between flex-wrap">
-	<div class="task-stage p-2 mb-3 flex-fill">
+	<div class="task-stage p-2 mb-1 flex-fill">
 		<h4 class="text-center task-stage-todo">Todo</h4>
 
 		<div class="drop-area-card-body custom-scrollbar-style-3 not-started-section" 
@@ -74,7 +74,7 @@
 
 		</div>
 	</div>
-	<div class="task-stage p-2 mb-3 flex-fill">
+	<div class="task-stage p-2 mb-1 flex-fill">
 		<h4 class="text-center task-stage-in-progress">In progress</h4>
 		<div class="drop-area-card-body custom-scrollbar-style-3 in-progress-section" 
 		@drop="drop($event)" @dragover="allowDrop($event)"
@@ -101,7 +101,7 @@
 
 		</div>
 	</div>
-	<div class="task-stage p-2 mb-3 flex-fill">
+	<div class="task-stage p-2 mb-1 flex-fill">
 		<h4 class="text-center task-stage-done">Done</h4>
 		<div class="drop-area-card-body custom-scrollbar-style-3 completed-section" 
 		@drop="drop($event)" @dragover="allowDrop($event)"

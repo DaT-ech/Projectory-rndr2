@@ -804,6 +804,10 @@
 	border-radius: 0.2rem;
 	font-size: 10pt;
 }
+.info-tag-darker{
+	background-color: rgba(36, 31, 49, 0.9) !important;
+	font-weight: 800;
+}
 
 .info-tag-light {
 	background-color: rgba(0, 0, 0, .05) !important;

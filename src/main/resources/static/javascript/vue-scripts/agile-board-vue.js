@@ -205,6 +205,7 @@ Vue.createApp({
 				boardOuterContainer.classList.add("ms-5");
 				fullScreenBtn.textContent = "Full Screen";
 				document.body.style.overflow = "visible";
+				document.querySelector("header").classList.add("fixed-top");//fix for notification not showing 			
 			}
 			else {
 				boardContainer.classList.add("full-screen");
@@ -212,6 +213,7 @@ Vue.createApp({
 				boardOuterContainer.classList.remove("ms-5");
 				fullScreenBtn.textContent = "Back";
 				document.body.style.overflow = "hidden";
+				document.querySelector("header").classList.remove("fixed-top");
 			}
 		}
 	}
