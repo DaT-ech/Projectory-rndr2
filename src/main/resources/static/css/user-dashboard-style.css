@@ -400,6 +400,7 @@
 	visibility: hidden;
 	height: 100%;
 	top: 0;
+	left: 0;
 }
 
 #viewing-modal {
